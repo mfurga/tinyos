@@ -3,13 +3,13 @@
 BASE=$(dirname -- "$0";)
 
 echo "[*] Building stage1 ..."
-nasm -DSTAGE2_SIZE=1 $BASE/boot_stage1.asm -o $BASE/boot_stage1.bin
+nasm -DSTAGE2_SIZE=1 $BASE/stage1.asm -o $BASE/stage1.img
 echo "[*] Building stage2 ..."
-nasm $BASE/boot_stage2.asm -o $BASE/boot_stage2.bin
+nasm $BASE/stage2.asm -o $BASE/stage2.img
 
-cat $BASE/boot_stage1.bin >boot.bin
-cat $BASE/boot_stage2.bin >>boot.bin
+cat $BASE/stage1.img >boot.img
+cat $BASE/stage2.img >>boot.img
 
-rm -f $BASE/boot_stage1.bin $BASE/boot_stage2.bin
+rm -f $BASE/stage1.img $BASE/stage2.img
 echo "[+] Done."
 
