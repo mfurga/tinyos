@@ -41,13 +41,13 @@
 %endif
 
 [bits 16]
-org 7c00h                                   ; Bootloader's starting address
+org 0x7c00                                  ; Bootloader's starting address
 
-jmp word 0000h:start
+jmp word 0x0000:start
 start:
-  mov ax, 7000h                             ; Set stack to end of usable memory
+  mov ax, 0x7000                            ; Set stack to end of usable memory
   mov ss, ax
-  mov sp, 0ffffh
+  mov sp, 0xffff
 
   xor ax, ax
   mov es, ax
@@ -57,46 +57,17 @@ start:
   mov cl, 2                                 ; Sector number
   mov dh, 0                                 ; Head number
   ;mov dl, 0                                ; Drive number (already set by BIOS)
-  mov bx, 7e00h                             ; es:bx destination address
-  int 13h
+  mov bx, 0x7e00                            ; es:bx destination address
+  int 0x13
 
-  jnc jump_to_stage2
-  mov si, DISK_READ_ERROR
-  call print_str
-  jmp $
-
-jump_to_stage2:
-  mov ax, 7e0h
+  mov ax, 0x7e0                             ; Set segment registers at start of stage 2
   mov ds, ax
   mov es, ax
-  jmp word 7e0h:0h                          ; Jump to second stage
-
-print_str:
-  pushfd
-  push ax
-  push bx
-  push si
-
-  mov ah, 0eh
-  mov bx, 000fh
-print_str_loop:
-  mov al, [si]
-  int 10h
-  inc si
-  cmp byte [si], 0
-  jnz print_str_loop
-
-  pop si
-  pop bx
-  pop ax
-  popfd
-  ret
-
-DISK_READ_ERROR db "Failed to read disk sectors.", 0
+  jmp word 0x7e0:0                          ; Jump to second stage
 
 %if ($ - $$) > 510
   %fatal "Bootloader exceed 512 bytes."
 %endif
 times 510 - ($ - $$) db 0                   ; Padding
-dw 0aa55h                                   ; Boot sector signature
+dw 0xaa55                                   ; Boot sector signature
 
