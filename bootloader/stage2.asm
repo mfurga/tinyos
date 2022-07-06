@@ -21,18 +21,20 @@ org 0x0000
 
 start_protected_mode:
 [bits 32]
-  mov ax, GDT_DATA_SEG
+  mov ax, GDT_DATA_SEG                      ; Set segment register to data segment selector
   mov ss, ax
   mov ds, ax
   mov es, ax
   mov fs, ax
   mov gs, ax
+  mov esp, 0x7ffff                          ; Set stack to end of usable memory
 
-  mov esp, 0x7ffff
-
-  push eax
+  mov dword [0xb8000], 0x0f410f41
   jmp $
 
+;
+; === GLOBAL DESCRIPTION TABLE ===
+;
 gdtr:
 dw gdt_end - gdt_begin - 1                  ; Size of GDT in bytes - 1
 dd (BASE_ADDR + gdt_begin)                  ; Linear address of GDT

@@ -377,7 +377,7 @@ memory: guest=512, host=256
 # The Bochs BIOS currently supports only the option "fastboot" to skip the
 # boot menu delay.
 #=======================================================================
-romimage: file=$BXSHARE/BIOS-bochs-latest, options=fastboot
+romimage: file=$BXSHARE/BIOS-bochs-legacy, options=fastboot
 #romimage: file=$BXSHARE/bios.bin-1.13.0 # http://www.seabios.org/SeaBIOS
 #romimage: file=mybios.bin, address=0xfff80000 # 512k at memory top
 
@@ -669,7 +669,7 @@ private_colormap: enabled=0
 # The optional parameter 'write_protected' can be used to control the media
 # write protect switch. By default it is turned off.
 #=======================================================================
-floppya: 1_44=boot.bin, status=inserted
+floppya: 1_44=boot.img, status=inserted
 #floppya: image=../1.44, status=inserted
 #floppya: 1_44=/dev/fd0H1440, status=inserted
 #floppya: 1_2=../1_2, status=inserted
@@ -965,7 +965,7 @@ parport1: enabled=1, file="parport.out"
 # the Beep() function. The 'gui' mode forwards the beep to the related
 # gui methods (currently only used by the Carbon gui).
 #=======================================================================
-speaker: enabled=0, mode=sound, volume=15
+#speaker: enabled=0, mode=sound, volume=15
 
 #=======================================================================
 # SB16:
