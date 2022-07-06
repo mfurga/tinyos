@@ -69,7 +69,7 @@ jump_to_stage2:
   mov ax, 7e0h
   mov ds, ax
   mov es, ax
-  jmp 7e0h:0h                               ; Jump to second stage
+  jmp word 7e0h:0h                          ; Jump to second stage
 
 print_str:
   pushfd
