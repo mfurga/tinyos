@@ -29,8 +29,9 @@ start_protected_mode:
   mov gs, ax
   mov esp, 0x7ffff                          ; Set stack to end of usable memory
 
-  mov dword [0xb8000], 0x0f410f41
-  jmp $
+  mov eax, 0x8000
+  call eax                                  ; Call kernel main
+  jmp $                                     ; Should never happen
 
 ;
 ; === GLOBAL DESCRIPTION TABLE ===
@@ -40,6 +41,7 @@ dw gdt_end - gdt_begin - 1                  ; Size of GDT in bytes - 1
 dd (BASE_ADDR + gdt_begin)                  ; Linear address of GDT
 
 align 8                                     ; 8-bytes alignment
+align 16
 
 ; Declare code and data segment descriptor in GDT as flat mode
 gdt_begin:
@@ -60,4 +62,10 @@ dw 0xf | (1 << 6) | (1 << 7)                ; Seg Limit 19:16, AVL, L, D/B, G,
 gdt_end:
 
 align 512
+
+%if ($ - $$) > 512
+  %fatal "Bootloader exceed 512 bytes."
+%endif
+
+times 512 - ($ - $$) db 0
 

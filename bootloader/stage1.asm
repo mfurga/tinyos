@@ -36,8 +36,8 @@
 ; |                        |
 ; +------------------------+ FFFFFh
 
-%ifndef STAGE2_SIZE
-  %fatal "STAGE2_SIZE must be defined."
+%ifndef KERNEL_SIZE
+  %fatal "KERNEL_SIZE must be defined."
 %endif
 
 [bits 16]
@@ -52,7 +52,7 @@ start:
   xor ax, ax
   mov es, ax
   mov ah, 2                                 ; Read sectors into memeory
-  mov al, STAGE2_SIZE                       ; Number of sectors
+  mov al, KERNEL_SIZE + 1                   ; Number of sectors (+1 for second stage)
   mov ch, 0                                 ; Cylinder number
   mov cl, 2                                 ; Sector number
   mov dh, 0                                 ; Head number
@@ -68,6 +68,7 @@ start:
 %if ($ - $$) > 510
   %fatal "Bootloader exceed 512 bytes."
 %endif
+
 times 510 - ($ - $$) db 0                   ; Padding
 dw 0xaa55                                   ; Boot sector signature
 
