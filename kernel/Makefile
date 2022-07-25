@@ -11,9 +11,9 @@ LDFLASGS = -nostdlib -Tlinker.ld
 BUILD_DIR = ../build
 KERNEL_IMAGE = kernel.bin
 
-SRCS = $(shell find . -name '*.c' -o -name '*.s')
+SRCS = $(shell find . -name '*.c' -o -name '*.asm')
 OBJS1 = $(SRCS:%.c=$(BUILD_DIR)/%.o)
-OBJS = $(OBJS1:%.s=$(BUILD_DIR)/%.o)
+OBJS = $(OBJS1:%.asm=$(BUILD_DIR)/%.o)
 
 $(BUILD_DIR)/$(KERNEL_IMAGE): $(OBJS)
 	@echo $(OBJS)
@@ -26,7 +26,7 @@ $(BUILD_DIR)/%.o: %.c
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/%.o: %.s
+$(BUILD_DIR)/%.o: %.asm
 	mkdir -p $(dir $@)
 	$(AS) $(ASFLAGS) $< -o $@
 
