@@ -1,7 +1,7 @@
 
-void _start(void) {
+void main(void) {
   char *video_memory = (char *)0xb8000;
   video_memory[0] = 'A';
-  for (;;);
+  video_memory[1] =  0x07;
 }
 
