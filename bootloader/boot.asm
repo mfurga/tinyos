@@ -68,6 +68,13 @@ start_protected_mode:
   ; Load segments into memory.
   cld
 
+  mov ecx, 1024
+  mov edi, 0x8040
+asdf:
+  mov byte [edi], 0xff
+  inc edi
+  loop asdf
+
   movzx ecx, word [ELF_BASE + ELF_PHNUM]
   movzx edx, word [ELF_BASE + ELF_PHENTSIZE]
   mov dword ebx, [ELF_BASE + ELF_PHOFF]
@@ -92,8 +99,6 @@ read_program_header:
 .skip_segment:
   add ebx, edx
   loop read_program_header
-
-  sti
 
   mov eax, [ELF_BASE + ELF_ENTRY]
   jmp eax                                   ; Jump to kernel entry point

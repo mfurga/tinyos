@@ -18,9 +18,10 @@ OBJS = $(OBJS1:%.asm=$(BUILD_DIR)/%.o)
 $(BUILD_DIR)/$(KERNEL_IMAGE): $(OBJS)
 	@echo $(OBJS)
 	$(LD) $(OBJS) -o $@ $(LDFLASGS)
+	nm $@ | awk '{ print $$1 " " $$3 }' >$(BUILD_DIR)/symbols
 	strip $@
-
 	stat --printf="%s" $@ | awk '{print int(($$0 + 511) / 512)}'>$(BUILD_DIR)/KERNEL_SIZE
+	stat --printf="\033[0;32mKernel size %s bytes\n\033[0m" $@
 
 $(BUILD_DIR)/%.o: %.c
 	mkdir -p $(dir $@)

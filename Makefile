@@ -18,5 +18,5 @@ clean:
 	rm -r $(BUILD_DIR)
 
 run: all
-	bochs -f bochsrc
+	bochs -f config/bochsrc -rc config/bochscmd
 
