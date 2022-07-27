@@ -47,6 +47,23 @@ set_cs:
   jmp $
 
 disk_ok:
+  ; Switch to protected mode
+  lgdt [gdtr]                               ; Load GDT into GDTR register
+  mov eax, cr0                              ; Set protected mode enable
+  or eax, 1
+  mov cr0, eax
+  jmp dword GDT_CODE_SEG:start_protected_mode
+
+start_protected_mode:
+[bits 32]
+  mov ax, GDT_DATA_SEG                      ; Set segment register to data segment selector
+  mov ss, ax
+  mov ds, ax
+  mov es, ax
+  mov fs, ax
+  mov gs, ax
+  mov esp, 0x7c00                           ; Set stack to end of usable memory
+
   ; Parse ELF.
   ; Load segments into memory.
   cld
@@ -78,6 +95,33 @@ read_program_header:
 
   mov eax, [ELF_BASE + ELF_ENTRY]
   jmp eax                                   ; Jump to kernel entry point
+
+GDT_CODE_SEG equ (gdt_code_seg - gdt_begin)
+GDT_DATA_SEG equ (gdt_data_seg - gdt_begin)
+
+gdtr:
+dw gdt_end - gdt_begin - 1                  ; Size of GDT in bytes - 1
+dd gdt_begin                                ; Linear address of GDT
+
+align 8                                     ; 8-bytes alignment
+
+; Declare code and data segment descriptor in GDT as flat mode
+gdt_begin:
+dq 0                                        ; Null segment
+
+gdt_code_seg:
+dw 0xffff                                   ; Segment Limit 15:00
+dw 0                                        ; Base Address 15:00
+dw 0 | (10 << 8) | (1 << 12) | (1 << 15)    ; Base 23:16, Type, S, DPL, P
+dw 0xf | (1 << 6) | (1 << 7)                ; Seg Limit 19:16, AVL, L, D/B, G,
+
+gdt_data_seg:
+dw 0xffff                                   ; Segment Limit 15:00
+dw 0                                        ; Base Address 15:00
+dw 0 | (2 << 8) | (1 << 12) | (1 << 15)     ; Base 23:16, Type, S, DPL, P
+dw 0xf | (1 << 6) | (1 << 7)                ; Seg Limit 19:16, AVL, L, D/B, G,
+                                            ; Base 31:24
+gdt_end:
 
 %if ($ - $$) > 510
   %fatal "Bootloader exceed 512 bytes."

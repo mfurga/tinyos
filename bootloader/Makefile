@@ -2,8 +2,8 @@ AS = nasm
 ASFLAGS = -fbin
 
 BUILD_DIR = ../build
-BOOTLOADER_IMAGE = $(BUILD_DIR)/boot.bin
+BIMAGE = $(BUILD_DIR)/boot.img
 
 all:
-	$(AS) $(ASFLAGS) -DKERNEL_SIZE=$(KERNEL_SIZE) boot.asm -o $(BOOTLOADER_IMAGE)
+	$(AS) $(ASFLAGS) -DKERNEL_SIZE=$(KERNEL_SIZE) boot.asm -o $(BIMAGE)
 
