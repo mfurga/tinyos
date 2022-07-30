@@ -4,7 +4,7 @@
 
 [bits 16]
 
-BIOSREG_SIZE equ 8 * 4 + 4 + 4
+REGS_SIZE equ 8 * 4 + 4 + 4
 
 section .text
 
@@ -23,7 +23,7 @@ biosint:
   pushad
 
   ; Check if reg_in == NULL.
-  mov dword eax, [esp + 8 + BIOSREG_SIZE]
+  mov dword eax, [esp + 8 + REGS_SIZE]
   test eax, eax
   jz .return
 
@@ -51,16 +51,16 @@ biosint:
   pushfd
   pushad
 
-  mov edi, [esp + 12 + 2 * BIOSREG_SIZE]
+  mov edi, [esp + 12 + 2 * REGS_SIZE]
   test edi, edi
   jz .null_reg_out
 
   mov esi, esp
-  mov ecx, BIOSREG_SIZE
+  mov ecx, REGS_SIZE
   rep movsb
 
 .null_reg_out:
-  add esp, BIOSREG_SIZE
+  add esp, REGS_SIZE
 .return
   popad
   popfd

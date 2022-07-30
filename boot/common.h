@@ -7,7 +7,7 @@
 
 #include "types.h"
 
-struct biosreg {
+struct regs {
   union {
     struct {
       u32 edi;
@@ -46,7 +46,15 @@ struct biosreg {
   };
 };
 
-void biosint(u16 no_int, const struct biosreg *in, struct biosreg *out);
+/* biosint.asm */
+void biosint(u16 no_int, const struct regs *in, struct regs *out);
+
+/* regs.c */
+void regsinit(struct regs *r);
+
+/* stdio.c */
+void putchar(char c);
+void puts(const char *s);
 
 #endif  // BOOT_COMMON_H
 

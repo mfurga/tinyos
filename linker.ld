@@ -4,7 +4,7 @@
 
 OUTPUT_FORMAT("elf32-i386", "elf32-i386", "elf32-i386")
 OUTPUT_ARCH(i386)
-ENTRY(entry16)
+ENTRY(entry)
 
 SECTIONS
 {
@@ -18,18 +18,7 @@ SECTIONS
   }
 
   . = ALIGN(0x10);
-  .rodata16 : { *boot*(.rodata) }
-
-  . = ALIGN(0x10);
   .data16 : { *boot*(.data) }
-
-  . = ALIGN(0x10);
-  .bss16 :
-  {
-    __bss16_start = .;
-    *boot*(.bss)
-    __bss16_end = .;
-  }
 
   __end16 = .;
 
