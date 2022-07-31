@@ -2,7 +2,8 @@
 ; BIOS interrupt interface.
 ;
 
-[bits 16]
+extern prot_to_real
+extern real_to_prot
 
 REGS_SIZE equ 8 * 4 + 4 + 4
 
@@ -10,12 +11,16 @@ section .text
 
 global biosint
 biosint:
+  [bits 32]
   ; esp + 4 = no_int
   ; esp + 8 = reg_in
   ; esp + 12 = reg_out
 
+  call dword prot_to_real
+  [bits 16]
+
   mov byte al, [esp + 4]
-  mov byte [cs:.int_no], al
+  mov byte [.int_no], al
 
   push fs
   push gs
@@ -66,5 +71,9 @@ biosint:
   popfd
   pop gs
   pop fs
-  retd
+
+  call dword real_to_prot
+  [bits 32]
+
+  ret
 

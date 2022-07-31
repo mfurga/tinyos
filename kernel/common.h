@@ -2,8 +2,8 @@
  * Common headers.
  */
 
-#ifndef BOOT_COMMON_H
-#define BOOT_COMMON_H
+#ifndef KERNEL_COMMON_H
+#define KERNEL_COMMON_H
 
 #include "types.h"
 
@@ -56,5 +56,5 @@ void regsinit(struct regs *r);
 void putchar(char c);
 void puts(const char *s);
 
-#endif  // BOOT_COMMON_H
+#endif  // KERNEL_COMMON_H
 

@@ -1,5 +1,5 @@
-#ifndef _IO_H_INCLUDED_
-#define _IO_H_INCLUDED_
+#ifndef KERNEL_IO_H
+#define KERNEL_IO_H
 
 #include "types.h"
 
@@ -23,5 +23,5 @@ static inline void outw(u16 port, u16 data) {
   __asm__ __volatile__ ("out dx, ax" : : "a" (data), "d" (port));
 }
 
-#endif  // _IO_H_INCLUDED_
+#endif  // KERNEL_IO_H
 
