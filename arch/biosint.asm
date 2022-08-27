@@ -66,7 +66,7 @@ biosint:
 
 .null_reg_out:
   add esp, REGS_SIZE
-.return
+.return:
   popad
   popfd
   pop gs

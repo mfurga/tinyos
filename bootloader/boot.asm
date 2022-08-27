@@ -43,6 +43,9 @@ start:
   ; Save drive number.
   mov byte [drive_number], dl
 
+  ; TODO: REMOVE THIS!
+  jmp chs_mode
+
   ; Check if LBA is supported.
   mov ah, 0x41
   mov bx, 0x55aa
@@ -127,7 +130,8 @@ read_program_header:
   pop cx
 
 .skip_segment:
-  add word ebx, [ELF_LOAD_ADDR + ELF_PHENTSIZE]
+  movzx word ax, [ELF_LOAD_ADDR + ELF_PHENTSIZE]
+  add ebx, eax
   loop read_program_header
 
   mov eax, [ELF_LOAD_ADDR + ELF_ENTRY]

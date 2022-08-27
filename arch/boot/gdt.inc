@@ -1,4 +1,3 @@
-
 ; === GLOBAL DESCRIPTOR TABLE ===
 ;
 ; Selector      Type

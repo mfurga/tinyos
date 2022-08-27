@@ -2,13 +2,13 @@
 ; Entry point of **real mode** kernel.
 ;
 
-%include "realmode.inc"
+%include "gdt.inc"
 
 section .text
 
 extern __bss_start, __bss_end
 extern gdtr
-extern main
+extern setup
 
 global entry
 entry:
@@ -52,7 +52,6 @@ entry:
   rep stosb
 
   ; Jump to C main function.
-  call main
+  call setup
   jmp $
-
 

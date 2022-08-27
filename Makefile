@@ -17,7 +17,7 @@ AS := nasm
 CC := i386-elf-gcc
 LD := i386-elf-ld
 
-ASFLAGS := -felf32 -iboot
+ASFLAGS := -felf32 -iarch -iarch/boot
 CFLAGS := -Wall -Wextra -std=c11 -O2 -I. -ggdb -ffreestanding -masm=intel
 
 LDFLASGS := -static -nostdlib -Tlinker.ld

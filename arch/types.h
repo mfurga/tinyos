@@ -1,5 +1,5 @@
-#ifndef KERNEL_TYPES_H
-#define KERNEL_TYPES_H
+#ifndef ARCH_TYPES_H
+#define ARCH_TYPES_H
 
 #define NORETURN __attribute__((noreturn))
 
@@ -14,5 +14,5 @@ typedef short s16;
 typedef unsigned int u32;
 typedef int s32;
 
-#endif  // KERNEL_TYPES_H
+#endif  // ARCH_TYPES_H
 

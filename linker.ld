@@ -50,6 +50,6 @@ SECTIONS
     *(.comment)
   }
 
-  . = ASSERT(__end16 <= 0xffff, "Read mode kernel too big!");
+  . = ASSERT(__end16 <= 0xffff, "Real mode kernel too big!");
 }
 

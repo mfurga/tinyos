@@ -2,10 +2,11 @@
  * Common headers.
  */
 
-#ifndef KERNEL_COMMON_H
-#define KERNEL_COMMON_H
+#ifndef ARCH_COMMON_H
+#define ARCH_COMMON_H
 
 #include "types.h"
+#include "io.h"
 
 struct regs {
   union {
@@ -52,9 +53,26 @@ void biosint(u16 no_int, const struct regs *in, struct regs *out);
 /* regs.c */
 void regsinit(struct regs *r);
 
-/* stdio.c */
-void putchar(char c);
-void puts(const char *s);
+static inline void io_delay(void) {
+  const u16 delay_port = 0x80;
+  outb(delay_port, 0);
+}
 
-#endif  // KERNEL_COMMON_H
+static inline void cli(void) {
+  __asm__ __volatile__("cli");
+}
+
+static inline void sti(void) {
+  __asm__ __volatile__("sti");
+}
+
+static inline void set_fs(u16 seg) {
+  __asm__ __volatile__("mov fs, ax;" : : "a" (seg));
+}
+
+static inline void set_gs(u16 seg) {
+  __asm__ __volatile__("mov gs, ax;" : : "a" (seg));
+}
+
+#endif  // ARCH_COMMON_H
 
