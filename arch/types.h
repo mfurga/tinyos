@@ -2,6 +2,8 @@
 #define ARCH_TYPES_H
 
 #define NORETURN __attribute__((noreturn))
+#define PACKED __attribute__((packed))
+#define CDECL __attribute__((__cdecl__))
 
 #define NULL ((void *)0)
 

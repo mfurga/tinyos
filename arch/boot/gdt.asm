@@ -5,7 +5,7 @@ section .data
 ; Selector      Type
 ; (GDT, RPL=0)
 ; 0x00          NULL segment
-; 0x08					32-bit code segment
+; 0x08          32-bit code segment
 ; 0x10          32-bit data segment
 ; 0x18          16-bit code segment
 ; 0x20          16-bit data segment

@@ -1,6 +1,8 @@
 %include "boot/gdt.inc"
 
 extern gdtr
+extern idtr16
+extern idtr32
 
 section .text
 global real_to_prot
@@ -27,8 +29,8 @@ real_to_prot:
   mov gs, ax
 
   ; Save and load new IDT.
-  sidt [realidtr]
-  lidt [protidtr]
+  sidt [idtr16]
+  lidt [idtr32]
 
   ; TODO: sti
   ret
@@ -42,8 +44,8 @@ prot_to_real:
   lgdt [gdtr]
 
   ; Save and load new IDT.
-  sidt [protidtr]
-  lidt [realidtr]
+  sidt [idtr32]
+  lidt [idtr16]
 
   mov ax, GDT_DATA_SEG16
   mov ds, ax
@@ -78,10 +80,10 @@ section .data
 ; === INTERRUPT DESCRIPTOR TABLE ===
 ;
 ; Real mode IDTR
-realidtr dw 0x400                           ; Limit
-         dd 0                               ; Address
+; realidtr dw 0x400                           ; Limit
+;          dd 0                               ; Address
 
-; Protected mode IDTR
-protidtr dw 0                               ; Limit
-         dd 0                               ; Address
+; ; Protected mode IDTR
+; protidtr dw 0                               ; Limit
+;          dd 0                               ; Address
 
