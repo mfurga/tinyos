@@ -26,6 +26,10 @@
 [bits 16]
 [org BASE_ADDR]
 
+%if (BASE_ADDR - (KERNEL_SIZE * 512 + ELF_LOAD_ADDR) <= 0)
+  %fatal "Kernel too large!"
+%endif
+
 start:
   ; Make sure that CS:IP = 0:0x7c00.
   jmp word 0x0000:.set_cs
