@@ -97,12 +97,7 @@ void idt_setup(void) {
 
   /* 32-255: User defined interrupts. */
 
-  /*
-    By default IRQ 0-7 maps to 0x8-0xf and IRQ 8-15 maps to 0x70-0x77.
-    The master's IRQ mappings conflict with the interrupt numbers used by
-    the CPU. Therefore we're going to remap them to 32-47 which are
-    user defined interrupts.
-  */
+  /* Set the master PIC's offset to 0x20 and the slave's to 0x28. */
   pic_remap(0x20, 0x28);
 
   idt_entry_set(32 + 0, (u32)irq0, GDT_CODE_SEG_32, IDT_GATE_INT_32);
