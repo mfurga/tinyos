@@ -2,9 +2,7 @@
  * Test and enable A20 line.
  */
 
-#include "types.h"
-#include "common.h"
-#include "io.h"
+#include <arch/common.h>
 
 #define _str(a) #a
 #define STR(a) _str(a)

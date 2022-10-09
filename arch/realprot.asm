@@ -4,11 +4,13 @@ extern gdtr
 extern idtr16
 extern idtr32
 
+extern pic_remap
+
 section .text
 global real_to_prot
 real_to_prot:
   [bits 16]
-  cli
+  ; TODO: cli
   lgdt [gdtr]
 
   ; Turn on protected mode.
@@ -32,13 +34,25 @@ real_to_prot:
   sidt [idtr16]
   lidt [idtr32]
 
+  ; Remap IRQs.
+  push 0x28
+  push 0x20
+  call pic_remap
+  add esp, 8
+
   ; TODO: sti
   ret
 
 global prot_to_real
 prot_to_real:
   [bits 32]
-  cli
+  ; TODO: cli
+
+  ; Remap IRQs.
+  push 0x70  ; slave_offset
+  push 8     ; master_offset
+  call pic_remap
+  add esp, 8
 
   ; Make sure GDT is loaded to GDTR.
   lgdt [gdtr]
@@ -72,18 +86,6 @@ prot_to_real:
   mov fs, ax
   mov gs, ax
 
-  sti
+  ; TODO: sti
   retd
-
-section .data
-;
-; === INTERRUPT DESCRIPTOR TABLE ===
-;
-; Real mode IDTR
-; realidtr dw 0x400                           ; Limit
-;          dd 0                               ; Address
-
-; ; Protected mode IDTR
-; protidtr dw 0                               ; Limit
-;          dd 0                               ; Address
 

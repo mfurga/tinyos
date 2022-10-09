@@ -2,7 +2,7 @@
 ; Entry point of **real mode** kernel.
 ;
 
-%include "gdt.inc"
+%include "arch/boot/gdt.inc"
 
 section .text
 

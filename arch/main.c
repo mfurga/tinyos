@@ -1,9 +1,8 @@
-#include "stdio.h"
-#include "types.h"
-#include "a20.h"
-#include "common.h"
-
+#include <arch/a20.h>
+#include <arch/common.h>
 #include <arch/ints/idt.h>
+#include <arch/stdio.h>
+
 #include <kernel/kernel.h>
 
 void NORETURN setup(void) {
@@ -18,7 +17,7 @@ void NORETURN setup(void) {
     : "=d"(r)
   );
 
-  __asm__ __volatile__("int3;");
+  //__asm__ __volatile__("int3;");
 
   kernel_main();
 }

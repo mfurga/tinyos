@@ -1,13 +1,13 @@
 #ifndef ARCH_INTS_IDT_H
 #define ARCH_INTS_IDT_H
 
-#include <arch/types.h>
+#include <arch/common.h>
 
-#define IDT_GATE_TASK 0x5
-#define IDT_GATE_INT_16 0x6
-#define IDT_GATE_TRAP_16 0x7
-#define IDT_GATE_INT_32 0xe
-#define IDT_GATE_TRAP_32 0xf
+#define IDT_GATE_TASK 0b00101
+#define IDT_GATE_INT_16 0b00110
+#define IDT_GATE_INT_32 0b01110
+#define IDT_GATE_TRAP_16 0b00111
+#define IDT_GATE_TRAP_32 0b01111
 
 extern void isr0(void);
 extern void isr1(void);
@@ -42,16 +42,32 @@ extern void isr29(void);
 extern void isr30(void);
 extern void isr31(void);
 
-typedef struct idt_gate_32 {
-  u16 offset1;
-  u16 selector;
-  u8 _reserved;
-  u8 type : 4;
-  u8 _zero : 1;
+extern void irq0(void);
+extern void irq1(void);
+extern void irq2(void);
+extern void irq3(void);
+extern void irq4(void);
+extern void irq5(void);
+extern void irq6(void);
+extern void irq7(void);
+extern void irq8(void);
+extern void irq9(void);
+extern void irq10(void);
+extern void irq11(void);
+extern void irq12(void);
+extern void irq13(void);
+extern void irq14(void);
+extern void irq15(void);
+
+typedef struct idt_entry_32 {
+  u16 offset_lo;
+  u16 segment;
+  u8 _zero;  /* Reserved / zero. */
+  u8 type : 5;
   u8 dpl : 2;
   u8 present : 1;
-  u16 offset2;
-} PACKED idt_gate_32_t;
+  u16 offset_hi;
+} PACKED idt_entry_32_t;
 
 typedef struct idtr {
   u16 limit;
@@ -59,6 +75,7 @@ typedef struct idtr {
 } PACKED idtr_t;
 
 void idt_setup(void);
+void pic_remap(u8 master_offset, u8 slave_offset);
 
 #endif  // ARCH_INTS_IDT_H
 
