@@ -614,6 +614,8 @@ pci: enabled=1, chipset=i440fx
 # Default value are sync=none, rtc_sync=0, time0=local
 #=======================================================================
 #clock: sync=none, time0=local
+#clock: sync=slowdown
+clock: sync=realtime
 
 #=======================================================================
 # CMOSIMAGE:
