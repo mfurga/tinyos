@@ -10,10 +10,10 @@ void NORETURN setup(void) {
   enable_a20();
   idt_setup();
 
-  pit_init(1);
+//  pit_init(1);
   sti();
 
-  __asm__ __volatile__("int3;");
+//  __asm__ __volatile__("int3;");
 
   kernel_main();
 }

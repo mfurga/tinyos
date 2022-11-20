@@ -1,4 +1,5 @@
 #include <arch/ints/int_handlers.h>
+#include <arch/stdio.h>
 #include <arch/pit.h>
 
 #define PIT_CHANNEL_0_PORT 0x40
@@ -28,6 +29,8 @@
 static u32 counter;
 
 static void pit_handler(int_context_t *context) {
+  UNUSED(context);
+
   kprintf("Tick: %i\n", counter);
   counter++;
 }
@@ -48,4 +51,5 @@ void pit_init(u32 freq) {
   outb(PIT_CHANNEL_0_PORT, lo);
   outb(PIT_CHANNEL_0_PORT, hi);
 }
+
 

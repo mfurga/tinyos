@@ -1,4 +1,4 @@
-%include "boot/gdt.inc"
+%include "arch/boot/gdt.inc"
 
 extern gdtr
 extern idtr16

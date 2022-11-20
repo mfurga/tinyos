@@ -9,7 +9,7 @@ CDECL void isr_handler(int_context_t *context) {
 }
 
 CDECL void irq_handler(int_context_t *context) {
-  //kprintf("IRQ interrupt %x %x\n", context->int_no, context->error_code);
+//  kprintf("IRQ interrupt %x %x\n", context->int_no, context->error_code);
 
   int_handler_t handler = handlers[context->int_no];
   if (handler != 0) {

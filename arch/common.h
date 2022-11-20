@@ -11,6 +11,7 @@
 #define CDECL    __attribute__((__cdecl__))
 
 #define NULL 0
+#define UNUSED(x) ((void)x)
 
 typedef unsigned char u8;
 typedef char s8;
@@ -102,7 +103,7 @@ struct regs {
 };
 
 /* biosint.asm */
-void biosint(u16 no_int, const struct regs *in, struct regs *out);
+void biosint(u8 no_int, const struct regs *in, struct regs *out);
 
 /* regs.c */
 void regsinit(struct regs *r);
