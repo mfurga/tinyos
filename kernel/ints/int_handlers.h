@@ -1,7 +1,7 @@
-#ifndef ARCH_INTS_ISR_H
-#define ARCH_INTS_ISR_H
+#ifndef KERNEL_INTS_ISR_H
+#define KERNEL_INTS_ISR_H
 
-#include <arch/common.h>
+#include <kernel/common.h>
 
 #define IRQ0 0x20
 #define IRQ1 0x21
@@ -38,5 +38,5 @@ CDECL void irq_handler(int_context_t *context);
 
 void int_handler_register(u8 int_no, int_handler_t handler);
 
-#endif  // ARCH_INTS_ISR_H
+#endif  // KERNEL_INTS_ISR_H
 

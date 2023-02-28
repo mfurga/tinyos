@@ -1,13 +1,13 @@
-#ifndef ARCH_INTS_IDT_H
-#define ARCH_INTS_IDT_H
+#ifndef KERNEL_INTS_IDT_H
+#define KERNEL_INTS_IDT_H
 
-#include <arch/common.h>
+#include <kernel/common.h>
 
 #define IDT_GATE_TASK 0b00101
-#define IDT_GATE_INT_16 0b00110
-#define IDT_GATE_INT_32 0b01110
-#define IDT_GATE_TRAP_16 0b00111
-#define IDT_GATE_TRAP_32 0b01111
+#define IDT_GATE_INT16 0b00110
+#define IDT_GATE_INT32 0b01110
+#define IDT_GATE_TRAP16 0b00111
+#define IDT_GATE_TRAP32 0b01111
 
 extern void isr0(void);
 extern void isr1(void);
@@ -77,5 +77,5 @@ typedef struct idtr {
 void idt_setup(void);
 void pic_remap(u8 master_offset, u8 slave_offset);
 
-#endif  // ARCH_INTS_IDT_H
+#endif  // KERNEL_INTS_IDT_H
 

@@ -17,13 +17,13 @@ void putchar(char c) {
   bios_putchar(c);
 }
 
-void kprint(const char *s) {
+void puts(const char *s) {
   for (; *s != '\0'; s++) {
     putchar(*s);
   }
 }
 
-static void kprint_dec(int n) {
+static void print_dec(int n) {
   char buff[11] = {0};
   int idx = 9;
 
@@ -34,7 +34,7 @@ static void kprint_dec(int n) {
 
   /* Undefined behavior when calculating the absolute value of INT_MIN. */
   if (n == -2147483648) {
-    kprint("-2147483648");
+    puts("-2147483648");
     return;
   }
 
@@ -48,10 +48,10 @@ static void kprint_dec(int n) {
     n /= 10;
   }
 
-  kprint(buff + idx + 1);
+  puts(buff + idx + 1);
 }
 
-static void kprint_hex(unsigned int n) {
+static void print_hex(unsigned int n) {
   char buff[9] = {0};
   int idx = 7;
 
@@ -68,10 +68,10 @@ static void kprint_hex(unsigned int n) {
     n /= 16;
   }
 
-  kprint(buff + idx + 1);
+  puts(buff + idx + 1);
 }
 
-void kprintf(const char *fmt, ...) {
+void printf(const char *fmt, ...) {
   va_list l;
   va_start(l, fmt);
 
@@ -87,15 +87,15 @@ void kprintf(const char *fmt, ...) {
     switch (*p) {
       case 'i':
       case 'd':
-        kprint_dec(va_arg(l, int));
+        print_dec(va_arg(l, int));
       break;
 
       case 'x':
-        kprint_hex(va_arg(l, unsigned int));
+        print_hex(va_arg(l, unsigned int));
       break;
 
       case 's':
-        kprint(va_arg(l, const char *));
+        puts(va_arg(l, const char *));
       break;
 
       case 'c':

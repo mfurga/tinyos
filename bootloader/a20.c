@@ -2,7 +2,7 @@
  * Test and enable A20 line.
  */
 
-#include <arch/common.h>
+#include "common.h"
 
 #define _str(a) #a
 #define STR(a) _str(a)
@@ -120,25 +120,25 @@ int enable_a20(void) {
   while (loops--) {
 
     if (test_a20()) {
-      return 0;
+      return 1;
     }
 
     enable_a20_bios();
     if (test_a20()) {
-      return 0;
+      return 1;
     }
 
     enable_a20_kbc();
     if (test_a20()) {
-      return 0;
+      return 1;
     }
 
     enable_a20_fast();
     if (test_a20()) {
-      return 0;
+      return 1;
     }
   }
 
-  return 1;
+  return 0;
 }
 

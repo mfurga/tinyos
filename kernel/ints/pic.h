@@ -1,7 +1,7 @@
-#ifndef ARCH_INTS_PIC_H
-#define ARCH_INTS_PIC_H
+#ifndef KERNEL_INTS_PIC_H
+#define KERNEL_INTS_PIC_H
 
-#include <arch/common.h>
+#include <kernel/common.h>
 
 #define PIC_MASTER_COMMNAD 0x20
 #define PIC_MASTER_DATA 0x21
@@ -15,4 +15,4 @@
 
 void pic_remap(u8 master_offset, u8 slave_offset);
 
-#endif  // ARCH_INTS_PIC_H
+#endif  // KERNEL_INTS_PIC_H

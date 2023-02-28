@@ -1,17 +1,24 @@
 ;
-; Entry point of **real mode** kernel.
+; Bootloader stage 2.
 ;
 
-%include "arch/boot/gdt.inc"
+%include "gdt.inc"
 
-section .text
+section .data
+extern BOOTLOADER_SIZE
+extern DRIVE_NUMBER
+
+DRIVE_NUMBER db 0
+BOOTLOADER_SIZE db 0
+
+section .entry
 
 extern __bss_start, __bss_end
 extern gdtr
-extern setup
+extern main
 
-global entry
-entry:
+global _start
+_start:
   [bits 16]
   cli
   xor ax, ax
@@ -22,10 +29,7 @@ entry:
   mov gs, ax
   mov sp, 0x7c00
 
-  ; TODO: Enable A20.
-
   ; Go to protected mode and jump to C main.
-  cli
   lgdt [gdtr]
 
   ; Turn on protected mode.
@@ -51,7 +55,11 @@ entry:
   mov edi, __bss_start
   rep stosb
 
+  ; Save params from stage 1.
+  mov byte [DRIVE_NUMBER], dl
+  mov byte [BOOTLOADER_SIZE], dh
+
   ; Jump to C main function.
-  call setup
+  call main
   jmp $
 

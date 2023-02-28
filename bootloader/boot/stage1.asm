@@ -1,15 +1,15 @@
 ;
-; Bootloader.
+; Bootloader stage 1.
 ;
 
-%ifndef KERNEL_SIZE
-  %fatal "KERNEL_SIZE must be defined."
+%ifndef STAGE2_SIZE
+  %fatal "STAGE2_SIZE must be defined."
 %endif
 
 %define BASE_ADDR 0x7c00
 %define STACK_ADDR BASE_ADDR
 
-%define ELF_LOAD_ADDR 0x500
+%define STAGE2_LOAD_ADDR 0x500
 
 ; ELF header consts.
 %define ELF_ENTRY 0x18
@@ -26,14 +26,13 @@
 [bits 16]
 [org BASE_ADDR]
 
-%if (BASE_ADDR - (KERNEL_SIZE * 512 + ELF_LOAD_ADDR) <= 0)
-  %fatal "Kernel too large!"
-%endif
+;%if (BASE_ADDR - (STAGE2_SIZE * 512 + STAGE2_LOAD_ADDR) <= 0)
+;  %fatal "Kernel too large!"
+;%endif
 
 start:
   ; Make sure that CS:IP = 0:0x7c00.
   jmp word 0x0000:.set_cs
-  ; TODO: Add BIOS parameter block.
 .set_cs:
   ; Set DS = SS = 0. SP = 0x7c00.
   cli
@@ -42,7 +41,6 @@ start:
   mov ss, ax
   mov es, ax
   mov sp, STACK_ADDR
-  sti
 
   ; Save drive number.
   mov byte [drive_number], dl
@@ -78,8 +76,8 @@ lba_mode:
   ; If LBA fail, try CHS.
   jc chs_mode
 
-  ; Parse and load ELF into memory.
-  jmp load_elf
+  ; Load stage2.
+  jmp load_stage2
 
 chs_mode:
   mov si, chs_read
@@ -88,58 +86,33 @@ chs_mode:
   xor ax, ax
   mov es, ax
   mov ah, 2                                 ; Read sectors into memeory
-  mov al, KERNEL_SIZE                       ; Number of sectors (+1 for second stage)
+  mov al, STAGE2_SIZE                       ; Number of sectors
   mov ch, 0                                 ; Cylinder number
-  mov cl, 2                                 ; Sector number
+  mov cl, 2                                 ; Sector number (+1 for stage1)
   mov dh, 0                                 ; Head number
   mov byte dl, [drive_number]               ; Drive number
-  mov bx, ELF_LOAD_ADDR                     ; es:bx destination address
+  mov bx, STAGE2_LOAD_ADDR                  ; es:bx destination address
   int 0x13
 
   jc read_error
   test ah, ah
-  jz load_elf
+  jz load_stage2
 
 read_error:
   mov si, disk_error
   call print_string
   jmp $ ; EB FE
 
-load_elf:
-  mov si, kernel_load
+load_stage2:
+  mov si, stage2_load
   call print_string
 
-  ; Parse ELF.
-  ; Load segments into memory.
-  cld
-
-  mov word cx, [ELF_LOAD_ADDR + ELF_PHNUM]
-  mov dword ebx, [ELF_LOAD_ADDR + ELF_PHOFF]
-  add ebx, ELF_LOAD_ADDR
-
-read_program_header:
-  ; PH type
-  mov dword eax, [ebx + PH_TYPE]
-  cmp eax, 1                                ; Loadable segment
-  jne .skip_segment
-
-  push cx
-
-  mov dword ecx, [ebx + PH_FILESZ]
-  mov dword esi, [ebx + PH_OFFSET]
-  add esi, ELF_LOAD_ADDR
-  mov dword edi, [ebx + PH_VADDR]
-  rep movsb                                 ; Copy segment
-
-  pop cx
-
-.skip_segment:
-  movzx word ax, [ELF_LOAD_ADDR + ELF_PHENTSIZE]
-  add ebx, eax
-  loop read_program_header
-
-  mov eax, [ELF_LOAD_ADDR + ELF_ENTRY]
-  jmp eax                                   ; Jump to kernel entry point
+  ; dl - Driver number
+  ; dh - Bootloader size
+  mov byte dl, [drive_number]
+  mov dh, STAGE2_SIZE
+  inc dh                                   ; +1 for stage1.
+  jmp 0x500                                ; Jump to stage2.
 
 ; Print string (null terminated) given in SI reg.
 print_string:
@@ -166,10 +139,10 @@ print_string:
 ; === Data section ===
 ;
 
-lba_read db "Reading sectors using LBA ...", 0x0d, 0x0a, 0
-chs_read db "Reading sectors using CHS ...", 0x0d, 0x0a, 0
-disk_error db "Failed to read sectors from the disk.", 0x0d, 0x0a, 0
-kernel_load db "Loading kernel ...", 0x0d, 0x0a, 0
+lba_read db "[*] Reading sectors using LBA ...", 0x0d, 0x0a, 0
+chs_read db "[*] Reading sectors using CHS ...", 0x0d, 0x0a, 0
+disk_error db "[-] Failed to read sectors from the disk.", 0x0d, 0x0a, 0
+stage2_load db "[*] Loading stage 2 ...", 0x0d, 0x0a, 0
 
 drive_number db 0
 
@@ -179,10 +152,10 @@ drive_number db 0
 dap_buffer:
   db 0x10                                   ; Size of DAP (set this to 10h)
   db 0                                      ; Unused (should be zero)
-  db KERNEL_SIZE                            ; Number of sectors to be read
+  db STAGE2_SIZE                            ; Number of sectors to be read
                                             ; (max 7Fh for Phoenix EDD)
   db 0                                      ; Unused (should be zero)
-  dw ELF_LOAD_ADDR                          ; Buffer offset
+  dw STAGE2_LOAD_ADDR                       ; Buffer offset
   dw 0                                      ; Buffer segment
   dq 0x200                                  ; LBA address
 

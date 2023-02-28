@@ -1,4 +1,4 @@
-#include <arch/ints/pic.h>
+#include <kernel/ints/pic.h>
 
 #define PIC_MASTER_COMMNAD 0x20
 #define PIC_MASTER_DATA 0x21

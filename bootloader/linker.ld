@@ -1,23 +1,23 @@
 /*
- * Linker script for the kernel code.
+ * Linker script for the bootloader.
  */
 
 OUTPUT_FORMAT("elf32-i386", "elf32-i386", "elf32-i386")
 OUTPUT_ARCH(i386)
-ENTRY(entry32)
+ENTRY(_start)
 
 SECTIONS
 {
-  . = 0x10000;
+  . = 0x500;
 
   .text :
   {
     *(.entry)
-    *(.text)
+    *(.text*)
   }
 
   . = ALIGN(0x10);
-  .rodata : { *(.rodata) }
+  .rodata : { *(.rodata*) }
 
   . = ALIGN(0x10);
   .data : { *(.data) }
@@ -35,5 +35,9 @@ SECTIONS
     *(.note*)
     *(.comment)
   }
+
+  __end = .;
+
+  . = ASSERT(__end <= 0xffff, "Bootloader too big!");
 }
 
