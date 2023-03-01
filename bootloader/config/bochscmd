@@ -1,3 +1,0 @@
-#show mode
-ldsym global "build/booloader/symbols"
-

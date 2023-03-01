@@ -32,7 +32,7 @@ CFLAGS := -Wall -Wextra -std=c11 -O2 -I. -ggdb -ffreestanding -masm=intel
 LDFLASGS := -static -nostdlib -Tlinker.ld
 
 STAGE1_SRC := boot/stage1.asm
-SRCS := $(shell find * -type f -name '*.c' -o -name '*.asm' -not -path 'boot/*')
+SRCS := $(shell find * -type f -name '*.c' -o -name '*.asm' -not -wholename 'boot/stage1.asm')
 
 OBJS1 := $(SRCS:%.c=$(BUILD_DIR)/%.o)
 OBJS := $(OBJS1:%.asm=$(BUILD_DIR)/%.o)
@@ -71,8 +71,4 @@ $(BUILD_DIR)/%.o: %.asm
 .PHONY: clean
 clean:
 	rm -r $(BUILD_DIR)
-
-.PHONY: run
-run: all
-	bochs -f config/bochsrc -rc config/bochscmd
 

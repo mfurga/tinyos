@@ -2,8 +2,7 @@
  * Common headers.
  */
 
-#ifndef ARCH_COMMON_H
-#define ARCH_COMMON_H
+#pragma once
 
 #include <stdint.h>
 
@@ -103,6 +102,10 @@ static inline u32 get_eflags(void) {
   return result;
 }
 
+static inline void halt(void) {
+  __asm__ __volatile__("hlt");
+}
+
 struct regs {
   union {
     struct {
@@ -148,5 +151,47 @@ void biosint(u8 no_int, const struct regs *in, struct regs *out);
 /* regs.c */
 void regsinit(struct regs *r);
 
-#endif  // ARCH_COMMON_H
+/* string.c */
+void *memset(void *src, unsigned char c, unsigned n);
+
+void *memcpy(void *dst, void *src, unsigned n);
+
+/* stdio.c */
+
+#define DEBUG 1
+
+#ifdef DEBUG
+#  define SAYF(x...) printf(x)
+#else
+#  define SAYF(x...)
+#endif
+
+#define INFO(x...) do { \
+    SAYF("[*] " x); \
+    SAYF("\n"); \
+  } while (0)
+
+#define OK(x...) do { \
+    SAYF("[+] " x); \
+    SAYF("\n"); \
+  } while (0)
+
+#define WARN(x...) do { \
+    SAYF("[!] WARNING: " x); \
+    SAYF("\n"); \
+  } while (0)
+
+#define FATAL(x...) do { \
+    SAYF("[-] FATAL: " x); \
+    SAYF("\n"); \
+    halt(); \
+  } while (0)
+
+void putchar(char c);
+void puts(const char *s);
+void printf(const char *fmt, ...);
+
+/* loader.c */
+
+void NORETURN load_kernel(void);
 

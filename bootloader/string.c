@@ -1,4 +1,3 @@
-#include "string.h"
 
 void *memset(void *src, unsigned char c, unsigned n) {
   __asm__ __volatile__(

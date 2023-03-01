@@ -1,6 +1,5 @@
 #include <stdarg.h>
 #include "common.h"
-#include "stdio.h"
 
 static void bios_putchar(char c) {
   struct regs in;
