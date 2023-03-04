@@ -1,14 +1,14 @@
 #include <kernel/string.h>
 
-void *memset(void *src, unsigned char c, unsigned n) {
+void *memset(void *s, unsigned char c, unsigned n) {
   __asm__ __volatile__(
     "mov edi, edx;"
     "rep stosb;"
     :
-    : "a" (c), "c" (n), "d" (src)
+    : "a" (c), "c" (n), "d" (s)
     : "edi"
   );
-  return src;
+  return s;
 }
 
 void *memcpy(void *dst, void *src, unsigned n) {

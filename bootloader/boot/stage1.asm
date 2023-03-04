@@ -45,6 +45,10 @@ start:
   ; Save drive number.
   mov byte [drive_number], dl
 
+  ; Print banner.
+  mov si, banner
+  call print_string
+
   ; TODO: REMOVE THIS!
   jmp chs_mode
 
@@ -139,9 +143,10 @@ print_string:
 ; === Data section ===
 ;
 
-lba_read db "[*] Reading sectors using LBA ...", 0x0d, 0x0a, 0
-chs_read db "[*] Reading sectors using CHS ...", 0x0d, 0x0a, 0
-disk_error db "[-] Failed to read sectors from the disk.", 0x0d, 0x0a, 0
+banner db "Bootloader ver. alpha", 0xd, 0xa, 0xd, 0xa, 0
+lba_read db "[*] Reading sectors using LBA ...", 0xd, 0xa, 0
+chs_read db "[*] Reading sectors using CHS ...", 0xd, 0xa, 0
+disk_error db "[-] Failed to read sectors from the disk.", 0xd, 0xa, 0
 stage2_load db "[*] Loading stage 2 ...", 0x0d, 0x0a, 0
 
 drive_number db 0

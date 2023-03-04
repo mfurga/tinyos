@@ -114,31 +114,35 @@ static void enable_a20_fast(void) {
   outb(0x92, port_a);
 }
 
-int enable_a20(void) {
+void enable_a20(void) {
   int loops = 4;
 
   while (loops--) {
 
     if (test_a20()) {
-      return 1;
+      goto success;
     }
 
     enable_a20_bios();
     if (test_a20()) {
-      return 1;
+      goto success;
     }
 
     enable_a20_kbc();
     if (test_a20()) {
-      return 1;
+      goto success;
     }
 
     enable_a20_fast();
     if (test_a20()) {
-      return 1;
+      goto success;
     }
   }
 
-  return 0;
+  FATAL("Failed to enable A20.");
+  return;
+
+success:
+  OK("A20 successfully enabled.");
 }
 

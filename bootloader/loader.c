@@ -16,6 +16,8 @@
 
 #define PT_LOAD 1
 
+extern boot_params_t boot_params;
+
 extern u8 BOOTLOADER_SIZE;
 extern u8 DRIVE_NUMBER;
 
@@ -55,12 +57,12 @@ static void check_addr(u32 addr) {
   }
 }
 
-u32 fetch_dword(u32 addr) {
+static u32 fetch_dword(u32 addr) {
   check_addr(addr);
   return *(u32 *)addr;
 }
 
-u16 fetch_word(u32 addr) {
+static u16 fetch_word(u32 addr) {
   check_addr(addr);
   return *(u16 *)addr;
 }
@@ -68,7 +70,7 @@ u16 fetch_word(u32 addr) {
 void NORETURN load_kernel(void) {
   u32 base_addr = BOOTLOADER_BASE + 512 * BOOTLOADER_SIZE;
 
-  INFO("Reading kernel to %x", base_addr);
+  //INFO("Reading kernel to %x\n", base_addr);
 
   sector_no = BOOTLOADER_SIZE + 1;
   load_addr = base_addr;
@@ -94,8 +96,19 @@ void NORETURN load_kernel(void) {
 
   u32 entry_point = fetch_dword(base_addr + ELF_ENTRY);
 
+  // Save current video state.
+  store_video();
+
+  // Jump to kernel entry point.
+  __asm__ __volatile__(
+    "mov esi, ebx;"
+    "jmp eax;"
+    :
+    : "a" (entry_point), "b" (&boot_params)
+  );
+
   // So dirty ...
-  ((void (*)(void))entry_point)();
+  //((void (*)(void))entry_point)();
 
   // Never goes here, hopefully.
   for (;;);
