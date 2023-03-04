@@ -22,6 +22,7 @@ extern u8 BOOTLOADER_SIZE;
 extern u8 DRIVE_NUMBER;
 
 static u32 sector_no;
+static u32 cylinder_no;
 static u32 load_addr;
 
 static void read_sectors(u32 no) {
@@ -31,7 +32,7 @@ static void read_sectors(u32 no) {
 
   in.ah = 2;                // Read sectors into memeory
   in.al = no;               // Number of sectors
-  in.ch = 0;                // Cylinder number
+  in.ch = (u8)cylinder_no;  // Cylinder number
   in.dh = 0;                // Head number
   in.cl = (u8)sector_no;    // Sector number
   in.dl = DRIVE_NUMBER;     // Drive number
@@ -46,6 +47,12 @@ static void read_sectors(u32 no) {
   sector_no += no;
   load_addr += 512 * no;
 
+  // Floppy
+  if (sector_no > 18) {
+    sector_no = sector_no % 18;
+    cylinder_no += sector_no / 18;
+  }
+
   if (sector_no > 63) {
     FATAL("Sector number too big!");
   }
@@ -53,7 +60,7 @@ static void read_sectors(u32 no) {
 
 static void check_addr(u32 addr) {
   if (addr >= load_addr) {
-    read_sectors((addr - load_addr + 511) / 512);
+    read_sectors((addr - load_addr + 512) / 512);
   }
 }
 
@@ -68,11 +75,12 @@ static u16 fetch_word(u32 addr) {
 }
 
 void NORETURN load_kernel(void) {
-  u32 base_addr = BOOTLOADER_BASE + 512 * BOOTLOADER_SIZE;
+  u32 base_addr = BOOTLOADER_BASE;
 
   //INFO("Reading kernel to %x\n", base_addr);
 
   sector_no = BOOTLOADER_SIZE + 1;
+  cylinder_no = 0;
   load_addr = base_addr;
 
   u16 phsize = fetch_word(base_addr + ELF_PHENTSIZE);
@@ -83,6 +91,7 @@ void NORETURN load_kernel(void) {
     u32 ph_type = fetch_dword(ph_addr + PH_TYPE);
 
     if (ph_type == PT_LOAD) {
+
       u32 ph_filesz = fetch_dword(ph_addr + PH_FILESZ);
       u32 ph_offset = base_addr + fetch_dword(ph_addr + PH_OFFSET);
       u32 ph_vaddr = fetch_dword(ph_addr + PH_VADDR);
