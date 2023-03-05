@@ -2,7 +2,7 @@
 #include <kernel/ints/pic.h>
 #include <kernel/gdt.h>
 
-static idt_entry_32_t idt[256];
+static idt_entry_32_t idt[256] ALIGNED(16);
 
 /* IDTR32 */
 static idtr_t idtr32 = { .address = (u32)&idt, .limit = sizeof(idt) - 1 };

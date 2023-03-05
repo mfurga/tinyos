@@ -4,7 +4,7 @@
 #define GDT_TYPE_DATA_RW (2)
 
 #define GDT_SYSTEM       (0 << 4)
-#define GDT_USER_OR_CODE (1 << 4)
+#define GDT_CODE_OR_DATA (1 << 4)
 
 #define GDT_DPL_RING_0   (0 << 5)
 #define GDT_DPL_RING_1   (1 << 5)
@@ -20,15 +20,15 @@
 
 #define GDT_GRANULARITY  (1 << 11)
 
-#define GDT_ENTRY(base, limit, flags) \
-  { \
-    .base_0_15 = (base) & 0xffff, \
-    .base_16_23 = ((base) >> 16) & 0xff, \
-    .base_24_31 = ((base) >> 24) & 0xff, \
-    .limit_0_15 = (limit) & 0xffff, \
-    .limit_16_19 = ((limit) >> 16) & 0xf, \
-    .flags_0_7 = (flags) & 0xff, \
-    .flags_8_11 = ((flags) >> 8) & 0xf \
+#define GDT_ENTRY(base, limit, flags)       \
+  {                                         \
+    .base_0_15 = (base) & 0xffff,           \
+    .base_16_23 = ((base) >> 16) & 0xff,    \
+    .base_24_31 = ((base) >> 24) & 0xff,    \
+    .limit_0_15 = (limit) & 0xffff,         \
+    .limit_16_19 = ((limit) >> 16) & 0xf,   \
+    .flags_0_7 = (flags) & 0xff,            \
+    .flags_8_11 = ((flags) >> 8) & 0xf      \
   }
 
 static gdt_entry_t gdt[] ALIGNED(16) = {
@@ -37,7 +37,7 @@ static gdt_entry_t gdt[] ALIGNED(16) = {
 
   /* 32-bit code segment descriptor, flat (4GB), R/E, Ring 0. */
   [GDT_ENTRY_CODE] = GDT_ENTRY(0, 0xfffff, GDT_TYPE_CODE_RE |
-                                           GDT_USER_OR_CODE |
+                                           GDT_CODE_OR_DATA |
                                            GDT_DPL_RING_0 |
                                            GDT_PRESENT |
                                            GDT_OP_SIZE_32 |
@@ -45,7 +45,7 @@ static gdt_entry_t gdt[] ALIGNED(16) = {
 
   /* 32-bit data segment descriptor, flat (4GB), R/W, Ring 0. */
   [GDT_ENTRY_DATA] = GDT_ENTRY(0, 0xfffff, GDT_TYPE_DATA_RW |
-                                           GDT_USER_OR_CODE |
+                                           GDT_CODE_OR_DATA |
                                            GDT_DPL_RING_0 |
                                            GDT_PRESENT |
                                            GDT_OP_SIZE_32 |
