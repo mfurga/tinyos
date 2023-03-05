@@ -2,13 +2,10 @@
 #include <kernel/ints/pic.h>
 #include <kernel/gdt.h>
 
-idt_entry_32_t idt[256];
+static idt_entry_32_t idt[256];
 
-/* Real mode IDT (Interrupt Vector Table). */
-idtr_t idtr16 = { .address = 0, .limit = 1024 - 1 };
-
-/* Protected mode IDT. */
-idtr_t idtr32 = { .address = (u32)&idt, .limit = sizeof(idt) - 1 };
+/* IDTR32 */
+static idtr_t idtr32 = { .address = (u32)&idt, .limit = sizeof(idt) - 1 };
 
 static void idt_entry_set(u16 no, u32 handler, u16 seg, u8 type) {
   idt[no].offset_lo = (handler & 0xffff);

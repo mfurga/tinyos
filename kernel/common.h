@@ -7,13 +7,16 @@
 
 #include <stdint.h>
 
-#define NORETURN __attribute__((noreturn))
-#define NOINLINE __attribute__((noinline))
-#define PACKED   __attribute__((packed))
-#define CDECL    __attribute__((__cdecl__))
+#define NORETURN    __attribute__((noreturn))
+#define NOINLINE    __attribute__((noinline))
+#define PACKED      __attribute__((packed))
+#define ALIGNED(x)  __attribute__((aligned(x)))
+#define CDECL       __attribute__((__cdecl__))
 
 #define NULL 0
 #define UNUSED(x) ((void)x)
+#define STR(s) STR_(s)
+#define STR_(s) #s
 
 typedef uint8_t u8;
 typedef int8_t s8;

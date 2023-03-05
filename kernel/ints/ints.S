@@ -1,3 +1,5 @@
+#define __ASSEMBLY__
+
 #include <kernel/gdt.h>
 
 .intel_syntax noprefix
