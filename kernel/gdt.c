@@ -58,6 +58,7 @@ static gdtr_t gdtr32 = { .address = (u32)&gdt, .limit = sizeof(gdt) - 1 };
 void gdt_setup(void) {
   __asm__ __volatile__(
     "lgdt %0;"
+    "mov ax, " STR(GDT_DATA_SEG32) ";"
     "mov ds, ax;"
     "mov ss, ax;"
     "mov es, ax;"
@@ -65,6 +66,6 @@ void gdt_setup(void) {
     "mov gs, ax;"
     "ljmp " STR(GDT_CODE_SEG32) ", 1f;"
     "1:"
-    : : "m" (gdtr32), "a"(GDT_DATA_SEG32)
+    : : "m" (gdtr32)
   );
 }

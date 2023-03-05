@@ -5,7 +5,7 @@
 #include <kernel/gdt.h>
 
 void CDECL NORETURN kernel_main(const boot_params_t *params) {
-  
+
   init_video(params->video.mode,
              params->video.x,
              params->video.y,
@@ -20,3 +20,4 @@ void CDECL NORETURN kernel_main(const boot_params_t *params) {
 
   for (;;);
 }
+

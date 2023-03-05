@@ -22,7 +22,7 @@ extern u8 BOOTLOADER_SIZE;
 extern u8 DRIVE_NUMBER;
 
 static u32 sector_no;
-static u32 cylinder_no;
+static u32 head_no;
 static u32 load_addr;
 
 static void read_sectors(u32 no) {
@@ -32,8 +32,8 @@ static void read_sectors(u32 no) {
 
   in.ah = 2;                // Read sectors into memeory
   in.al = no;               // Number of sectors
-  in.ch = (u8)cylinder_no;  // Cylinder number
-  in.dh = 0;                // Head number
+  in.ch = 0;                // Cylinder number
+  in.dh = (u8)head_no;      // Head number
   in.cl = (u8)sector_no;    // Sector number
   in.dl = DRIVE_NUMBER;     // Drive number
   in.bx = (u16)load_addr;   // ES:BX destination address (ES = 0)
@@ -47,10 +47,10 @@ static void read_sectors(u32 no) {
   sector_no += no;
   load_addr += 512 * no;
 
-  // Floppy
+  // FIXME: Works only for floppy disks!
   if (sector_no > 18) {
+    head_no += sector_no / 18;
     sector_no = sector_no % 18;
-    cylinder_no += sector_no / 18;
   }
 
   if (sector_no > 63) {
@@ -80,7 +80,7 @@ void NORETURN load_kernel(void) {
   //INFO("Reading kernel to %x\n", base_addr);
 
   sector_no = BOOTLOADER_SIZE + 1;
-  cylinder_no = 0;
+  head_no = 0;
   load_addr = base_addr;
 
   u16 phsize = fetch_word(base_addr + ELF_PHENTSIZE);
@@ -97,6 +97,7 @@ void NORETURN load_kernel(void) {
       u32 ph_vaddr = fetch_dword(ph_addr + PH_VADDR);
 
       check_addr(ph_offset + ph_filesz);
+
       memcpy((void *)ph_vaddr, (void *)ph_offset, ph_filesz);
     }
 
