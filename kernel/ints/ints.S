@@ -10,6 +10,7 @@
 .macro ISR_WITHOUT_ERROR_CODE int_no
   .globl isr\int_no
   isr\int_no:
+    cli
     pushd 0         // Error code.
     pushd \int_no   // Interrupt number.
     jmp isr_common_stub
@@ -18,6 +19,7 @@
 .macro ISR_WITH_ERROR_CODE int_no
   .globl isr\int_no
   isr\int_no:
+    cli
     pushd \int_no   // Interrupt number.
     jmp isr_common_stub
 .endm
@@ -25,6 +27,7 @@
 .macro IRQ irq_no
   .globl irq\irq_no
   irq\irq_no:
+    cli
     pushd \irq_no       // IRQ number (0-15).
     pushd 32 + \irq_no  // Mapped interrupt number.
     jmp irq_common_stub
@@ -61,6 +64,7 @@ isr_common_stub:
 
   popad
   add esp, 8
+  sti
   iret
 
 irq_common_stub:
@@ -87,6 +91,7 @@ irq_common_stub:
 
   popad
   add esp, 8
+  sti
   iret
 
 // [Fault] Divide-by-zero

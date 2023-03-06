@@ -49,4 +49,3 @@ void pit_init(u32 freq) {
   outb(PIT_CHANNEL_0_PORT, hi);
 }
 
-

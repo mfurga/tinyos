@@ -40,7 +40,7 @@ static struct {
   u8 attr;
 } context;
 
-void init_video(u8 video_mode, u8 x, u8 y, u8 cols, u8 lines) {
+void video_init(u8 video_mode, u8 x, u8 y, u8 cols, u8 lines) {
   context.mode = video_mode;
   context.x = x;
   context.y = y;
