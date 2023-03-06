@@ -66,7 +66,7 @@ static void scroll(void) {
   void *src = (void *)(VRAM_BASE_ADDR + cols * 2);
   unsigned n = cols * (lines - 1) * 2;
 
-  /* Move. */
+  /* FIXME: memmove. */
   memcpy(dst, src, n);
 
   void *s = (void *)(VRAM_BASE_ADDR + n);

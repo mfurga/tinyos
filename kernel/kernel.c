@@ -3,6 +3,7 @@
 #include <kernel/video.h>
 #include <kernel/ints/idt.h>
 #include <kernel/gdt.h>
+#include <kernel/cpu.h>
 
 void CDECL NORETURN kernel_main(const boot_params_t *params) {
 
@@ -17,6 +18,11 @@ void CDECL NORETURN kernel_main(const boot_params_t *params) {
   idt_setup();
 
   gdt_setup();
+
+  if (!cpuid_check()) {
+    printf("CPUID instruction is not supported!\n");
+    for(;;);
+  }
 
   for (;;);
 }
