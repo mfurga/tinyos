@@ -30,6 +30,10 @@ typedef int32_t s32;
 typedef uint64_t u64;
 typedef int64_t s64;
 
+static inline void int3(void) {
+  __asm__ __volatile__ ("int3");
+}
+
 static inline u8 inb(u16 port) {
   u8 result;
   __asm__ __volatile__ ("in al, dx" : "=a" (result) : "d" (port));

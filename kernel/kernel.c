@@ -5,9 +5,20 @@
 #include <kernel/pit.h>
 #include <kernel/gdt.h>
 #include <kernel/cpu.h>
-#include <kernel/keyboard.h>
 
 #include <drivers/rtc.h>
+#include <drivers/keyboard.h>
+
+void print_memory_map(const boot_params_t *params) {
+  printf("BIOS-e820 physical RAM map:\n");
+
+  for (u16 i = 0; i < params->memory_entries; i++) {
+    printf("[%16lx - %16lx] %d\n",
+      params->memory_map[i].addr,
+      params->memory_map[i].addr + params->memory_map[i].length,
+      params->memory_map[i].type);
+  }
+}
 
 void CDECL NORETURN kernel_main(const boot_params_t *params) {
 
@@ -43,6 +54,10 @@ void CDECL NORETURN kernel_main(const boot_params_t *params) {
     datetime.hour,
     datetime.minute,
     datetime.second);
+
+  print_memory_map(params);
+
+  int3();
 
   for (;;);
 }

@@ -36,20 +36,36 @@ static gdt_entry_t gdt[] ALIGNED(16) = {
   [GDT_ENTRY_NULL] = GDT_ENTRY(0, 0, 0),
 
   /* 32-bit code segment descriptor, flat (4GB), R/E, Ring 0. */
-  [GDT_ENTRY_CODE] = GDT_ENTRY(0, 0xfffff, GDT_TYPE_CODE_RE |
-                                           GDT_CODE_OR_DATA |
-                                           GDT_DPL_RING_0 |
-                                           GDT_PRESENT |
-                                           GDT_OP_SIZE_32 |
-                                           GDT_GRANULARITY),
+  [GDT_ENTRY_KERNEL_CODE] = GDT_ENTRY(0, 0xfffff, GDT_TYPE_CODE_RE |
+                                                  GDT_CODE_OR_DATA |
+                                                  GDT_DPL_RING_0 |
+                                                  GDT_PRESENT |
+                                                  GDT_OP_SIZE_32 |
+                                                  GDT_GRANULARITY),
 
   /* 32-bit data segment descriptor, flat (4GB), R/W, Ring 0. */
-  [GDT_ENTRY_DATA] = GDT_ENTRY(0, 0xfffff, GDT_TYPE_DATA_RW |
-                                           GDT_CODE_OR_DATA |
-                                           GDT_DPL_RING_0 |
-                                           GDT_PRESENT |
-                                           GDT_OP_SIZE_32 |
-                                           GDT_GRANULARITY)
+  [GDT_ENTRY_KERNEL_DATA] = GDT_ENTRY(0, 0xfffff, GDT_TYPE_DATA_RW |
+                                                  GDT_CODE_OR_DATA |
+                                                  GDT_DPL_RING_0 |
+                                                  GDT_PRESENT |
+                                                  GDT_OP_SIZE_32 |
+                                                  GDT_GRANULARITY),
+
+  /* 32-bit code segment descriptor, flat (4GB), R/E, Ring 3. */
+  [GDT_ENTRY_USER_CODE] = GDT_ENTRY(0, 0xfffff, GDT_TYPE_CODE_RE |
+                                                GDT_CODE_OR_DATA |
+                                                GDT_DPL_RING_3 |
+                                                GDT_PRESENT |
+                                                GDT_OP_SIZE_32 |
+                                                GDT_GRANULARITY),
+
+  /* 32-bit data segment descriptor, flat (4GB), R/W, Ring 3. */
+  [GDT_ENTRY_USER_DATA] = GDT_ENTRY(0, 0xfffff, GDT_TYPE_DATA_RW |
+                                                GDT_CODE_OR_DATA |
+                                                GDT_DPL_RING_3 |
+                                                GDT_PRESENT |
+                                                GDT_OP_SIZE_32 |
+                                                GDT_GRANULARITY)
 };
 
 /* GDTR. */
@@ -58,14 +74,15 @@ static gdtr_t gdtr32 = { .address = (u32)&gdt, .limit = sizeof(gdt) - 1 };
 void gdt_setup(void) {
   __asm__ __volatile__(
     "lgdt %0;"
-    "mov ax, " STR(GDT_DATA_SEG32) ";"
+    "mov ax, " STR(GDT_SEL_KERNEL_DATA | GDT_SEL_RPL_0) ";"
     "mov ds, ax;"
     "mov ss, ax;"
     "mov es, ax;"
     "mov fs, ax;"
     "mov gs, ax;"
-    "ljmp " STR(GDT_CODE_SEG32) ", 1f;"
+    "ljmp " STR(GDT_SEL_KERNEL_CODE | GDT_SEL_RPL_0) ", 1f;"
     "1:"
     : : "m" (gdtr32)
   );
 }
+

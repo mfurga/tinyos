@@ -43,7 +43,7 @@ isr_common_stub:
   mov ax, ds
   push eax
 
-  mov ax, GDT_DATA_SEG32
+  mov ax, GDT_SEL_KERNEL_DATA | GDT_SEL_RPL_0
   mov ds, ax
   mov es, ax
   mov fs, ax
@@ -73,7 +73,7 @@ irq_common_stub:
   mov ax, ds
   push eax
 
-  mov ax, GDT_DATA_SEG32
+  mov ax, GDT_SEL_KERNEL_DATA | GDT_SEL_RPL_0
   mov ds, ax
   mov es, ax
   mov fs, ax

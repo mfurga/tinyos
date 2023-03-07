@@ -141,44 +141,56 @@ static void printf_dec(int n) {
   puts(buff + idx + 1);
 }
 
-static void printf_hex(unsigned int n) {
-  char buff[9] = {0};
-  int idx = 7;
+static void printf_hex(unsigned int n, int padding) {
+  if (padding > 8) {
+    padding = 8;
+  }
+  padding = 8 - padding;
 
-  put_char('0');
-  put_char('x');
+  char buff[9] = {0};
+
+  int idx = 8;
 
   if (n == 0) {
-    put_char('0');
-    return;
+    buff[--idx] = '0';
   }
 
   while (n > 0) {
-    buff[idx--] = "0123456789abcdef"[n % 16];
+    buff[--idx] = "0123456789abcdef"[n % 16];
     n /= 16;
   }
 
-  puts(buff + idx + 1);
+  while (idx > padding) {
+    buff[--idx] = '0';
+  }
+
+  puts(buff + idx);
 }
 
-static void printf_lhex(long long unsigned int n) {
-  char buff[16 + 1] = {0};
-  int idx = 15;
+static void printf_lhex(long long unsigned int n, int padding) {
+  if (padding > 16) {
+    padding = 16;
+  }
+  padding = 16 - padding;
 
-  put_char('0');
-  put_char('x');
+
+  char buff[16 + 1] = {0};
+  int idx = 16;
 
   if (n == 0) {
-    put_char('0');
-    return;
+    buff[--idx] = '0';
   }
 
   while (n > 0) {
-    buff[idx--] = "0123456789abcdef"[n % 16];
+    buff[--idx] = "0123456789abcdef"[n % 16];
     n /= 16;
   }
 
-  puts(buff + idx + 1);
+  while (idx > padding) {
+    buff[--idx] = '0';
+  }
+
+  puts(buff + idx);
 }
 
 void putc(u8 ch) {
@@ -197,7 +209,8 @@ void printf(const char *fmt, ...) {
   va_list l;
   va_start(l, fmt);
 
-  u32 long_mode = 0;
+  int is_long = 0;
+  int padding = 0;
 
   const char *p = fmt;
   while (*p != '\0') {
@@ -208,24 +221,48 @@ void printf(const char *fmt, ...) {
 
     p++;
     switch (*p) {
+      case '0' ... '9':  /* ([0-9]{2}?)(l?)x */
+        /* Padding only works for hex formating. */
+        padding = *p - '0';
+        p++;
+
+        if ('0' <= *p && *p <= '9') {
+          padding = padding * 10 + *p - '0';
+          p++;
+        }
+
+        if (*p == 'l') {
+          is_long = 1;
+          p++;
+        }
+
+        if (*p == 'x') {
+          if (is_long) {
+            printf_lhex(va_arg(l, long long unsigned int), padding);
+          } else {
+            printf_hex(va_arg(l, unsigned int), padding);
+          }
+        }
+
+      break;
+
+      case 'l':  /* lx */
+        /* Long only works for hex formating. */
+        p++;
+
+        if (*p == 'x') {
+          printf_lhex(va_arg(l, long long unsigned int), 0);
+        }
+
+      break;
+
+      case 'x':
+        printf_hex(va_arg(l, unsigned int), 0);
+      break;
+
       case 'i':
       case 'd':
         printf_dec(va_arg(l, int));
-      break;
-
-      case 'l':
-        long_mode = 1;
-        p++;
-
-        /* fall-through */
-
-      case 'x':
-        if (long_mode) {
-          printf_lhex(va_arg(l, long long unsigned int));
-          long_mode = 0;
-        } else {
-          printf_hex(va_arg(l, unsigned int));
-        }
       break;
 
       case 's':
@@ -239,7 +276,10 @@ void printf(const char *fmt, ...) {
       case '\0':
       continue;
     }
+
     p++;
+    is_long = 0;
+    padding = 0;
   }
 
   va_end(l);
