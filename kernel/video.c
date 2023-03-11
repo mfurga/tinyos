@@ -2,6 +2,8 @@
 #include <kernel/string.h>
 #include <kernel/video.h>
 
+#include <drivers/serial.h>
+
 #include <stdarg.h>
 
 #define VRAM_BASE_ADDR 0xb8000
@@ -112,6 +114,9 @@ static void put_char(u8 ch) {
   }
 
   fix_cursor();
+
+  /* To change. */
+  serial_write(ch);
 }
 
 static void printf_dec(int n) {

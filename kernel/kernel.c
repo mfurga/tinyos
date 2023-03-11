@@ -6,10 +6,10 @@
 #include <kernel/gdt.h>
 #include <kernel/cpu.h>
 
-#include <drivers/rtc.h>
-#include <drivers/keyboard.h>
+#include <drivers/serial.h>
 
 void CDECL NORETURN kernel_main(const boot_params_t *params) {
+  serial_init();
 
   video_init(params->video.mode,
              params->video.x,
@@ -22,10 +22,6 @@ void CDECL NORETURN kernel_main(const boot_params_t *params) {
   idt_setup();
 
   gdt_setup();
-
-  pit_init(100);
-
-  keyboard_init();
 
   if (!cpuid_check()) {
     printf("CPUID instruction is not supported!\n");
