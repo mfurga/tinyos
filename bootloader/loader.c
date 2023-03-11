@@ -75,6 +75,8 @@ static u16 fetch_word(u32 addr) {
 }
 
 void NORETURN load_kernel(void) {
+  INFO("Loading kernel ...\n");
+
   u32 base_addr = BOOTLOADER_BASE;
 
   //INFO("Reading kernel to %x\n", base_addr);

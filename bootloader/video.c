@@ -30,6 +30,15 @@ static void store_resolution(void) {
   boot_params.video.lines = *(u8 *)lines_addr + 1;
 }
 
+static void set_mode(u8 mode) {
+  struct regs in;
+  regsinit(&in);
+
+  in.ah = 0;
+  in.al = mode;
+  biosint(0x10, &in, NULL);
+}
+
 void store_video(void) {
   store_video_mode();
   store_cursor_position();

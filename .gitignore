@@ -1,4 +1,6 @@
 *.img
 *.swp
 *.txt
+*.out
 build
+

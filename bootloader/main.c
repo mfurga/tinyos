@@ -4,7 +4,7 @@
 boot_params_t boot_params;
 
 void NORETURN main(void) {
-  OK("Stage 2 loaded.");
+  serial_init();
 
   enable_a20();
 
@@ -12,7 +12,6 @@ void NORETURN main(void) {
 
   set_video();
 
-  INFO("Loading kernel ...\n");
   load_kernel();
 }
 

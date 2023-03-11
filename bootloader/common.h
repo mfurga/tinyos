@@ -226,4 +226,6 @@ void detect_memory_e820(void);
 /* loader.c */
 void NORETURN load_kernel(void);
 
-
+/* serial.c */
+void serial_init(void);
+void serial_putchar(u8 ch);

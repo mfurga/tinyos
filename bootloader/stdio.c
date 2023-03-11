@@ -14,6 +14,8 @@ void putchar(char c) {
     bios_putchar('\r');
   }
   bios_putchar(c);
+  
+  serial_putchar(c);
 }
 
 void puts(const char *s) {
