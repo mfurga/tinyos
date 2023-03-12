@@ -7,6 +7,7 @@
 #include <kernel/cpu.h>
 
 #include <drivers/serial.h>
+#include <drivers/pci.h>
 
 void CDECL NORETURN kernel_main(const boot_params_t *params) {
   serial_init();
@@ -27,6 +28,8 @@ void CDECL NORETURN kernel_main(const boot_params_t *params) {
     printf("CPUID instruction is not supported!\n");
     for(;;);
   }
+
+  pci_probe();
 
   int3();
 

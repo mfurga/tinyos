@@ -24,8 +24,8 @@ void serial_init(void) {
   serial_set_baud_rate(SERIAL_COM1_PORT, SERIAL_BAUD_RATE_9600);
 
   /* 8N1 */
-  serial_set_format(SERIAL_COM1_PORT, SERIAL_DATA_BITS_8 +
-                                      SERIAL_PARITY_NONE +
+  serial_set_format(SERIAL_COM1_PORT, SERIAL_DATA_BITS_8 |
+                                      SERIAL_PARITY_NONE |
                                       SERIAL_STOP_BIT_1);
 
   outb(SERIAL_COM1_PORT + SERIAL_FIFO_REG, 0);     /* No FIFO */
