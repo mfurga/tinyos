@@ -24,11 +24,11 @@ static u32 pci_config_read_dword(u8 bus, u8 dev, u8 func, u8 offset) {
   return ind(PCI_CONFIG_DATA_PORT);
 }
 
-static inline u16 pci_get_vendor(u8 bus, u8 dev, u8 func) {
+static inline u16 pci_get_venid(u8 bus, u8 dev, u8 func) {
   return pci_config_read_dword(bus, dev, func, 0) & 0xffff;
 }
 
-static inline u16 pci_get_device(u8 bus, u8 dev, u8 func) {
+static inline u16 pci_get_devid(u8 bus, u8 dev, u8 func) {
   return pci_config_read_dword(bus, dev, func, 0) >> 16;
 }
 
@@ -51,11 +51,12 @@ static inline u8 pci_get_secondary_bus(u8 bus, u8 dev, u8 func) {
 static void pci_probe_bus(u8 bus);
 
 static void pci_probe_func(u8 bus, u8 dev, u8 func) {
-  u16 vendor = pci_get_vendor(bus, dev, func);
-  if (vendor == 0xffff) {
+  u16 venid = pci_get_venid(bus, dev, func);
+  if (venid == 0xffff) {
     /* no device. */
     return;
   }
+  u16 devid = pci_get_devid(bus, dev, func);
 
   u8 class = pci_get_class(bus, dev, func);
   u8 subclass = pci_get_subclass(bus, dev, func);
@@ -63,8 +64,8 @@ static void pci_probe_func(u8 bus, u8 dev, u8 func) {
 
   /* TODO: add device */
 
-  printf("%2x:%2x:%2x ven: %x dev: %x class: %x sub: %x htype: %x\n",
-    bus, dev, func, vendor, dev, class, subclass, htype);
+  printf("%2x:%2x:%2x venid: %x devid: %x class: %x sub: %x htype: %x\n",
+    bus, dev, func, venid, devid, class, subclass, htype);
 
   if (class == PCI_DEV_BRIDGE && subclass == PCI_DEV_BRIDGE_PCI2PCI) {
     pci_probe_bus(pci_get_secondary_bus(bus, dev, func));
