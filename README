@@ -1,0 +1,4 @@
+OSDEV
+=====
+
+A simple OS with a custom bootloader written for x86-32 protected mode.
