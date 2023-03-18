@@ -6,7 +6,7 @@ void NORETURN kernel_panic(const int_context_t *context) {
   printf(
     "\n"
     "=== KERNEL PANIC ===\n"
-    "ISR: %2xh  error_code: %2xh\n\n"
+    "Exception: %2xh  error_code: %2xh\n\n"
     "cs:     %2xh\n"
     "eip:    %8xh\n"
     "eflags: %8xh\n"

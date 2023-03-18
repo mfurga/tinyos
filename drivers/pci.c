@@ -14,6 +14,9 @@
 /* PCI device subclasses */
 #define PCI_DEV_BRIDGE_PCI2PCI    4  /* PCI-to-PCI Bridge */
 
+#define PCI_HDRTYPE_MULTIFUNC(bus, dev) \
+  ((pci_get_header_type(bus, dev, 0) & 0x80) != 0)
+
 static u32 pci_config_read_dword(u8 bus, u8 dev, u8 func, u8 offset) {
   u32 addr = (1 << 31) |
              ((u32)(bus & 0xff) << 16) |
@@ -64,7 +67,7 @@ static void pci_probe_func(u8 bus, u8 dev, u8 func) {
 
   /* TODO: add device */
 
-  printf("%2x:%2x:%2x venid: %x devid: %x class: %x sub: %x htype: %x\n",
+  printf("%2x:%2x:%x %4x:%4x class: %x sub: %x htype: %x\n",
     bus, dev, func, venid, devid, class, subclass, htype);
 
   if (class == PCI_DEV_BRIDGE && subclass == PCI_DEV_BRIDGE_PCI2PCI) {
@@ -73,19 +76,11 @@ static void pci_probe_func(u8 bus, u8 dev, u8 func) {
 }
 
 static void pci_probe_bus(u8 bus) {
-  u8 func = 0;
-
   for (u8 dev = 0; dev < 32; dev++) {
-    pci_probe_func(bus, dev, func);
-
-    u8 htype = pci_get_header_type(bus, dev, func);
-    if ((htype & 0x80) != 0) {
-      /* multi-function device. */
-      for (func++; func < 8; func++) {
-        pci_probe_func(bus, dev, func);
-      }
+    for (u8 func = 0; func < (PCI_HDRTYPE_MULTIFUNC(bus, dev) ? 8 : 1); func++) {
+      pci_probe_func(bus, dev, func);
     }
-   }
+  }
 }
 
 void pci_probe(void) {
