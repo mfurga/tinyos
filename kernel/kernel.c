@@ -4,14 +4,11 @@
 #include <kernel/pit.h>
 #include <kernel/gdt.h>
 #include <kernel/cpu.h>
-//#include <kernel/mem/pmm.h>
 #include <kernel/stdio.h>
+#include <kernel/panic.h>
 
 #include <drivers/vga.h>
 #include <drivers/serial.h>
-#include <drivers/pci.h>
-#include <drivers/rtc.h>
-#include <drivers/cmos.h>
 
 /*
 void print_memory_map(const boot_params_t *params) {
@@ -35,36 +32,17 @@ void CDECL NORETURN kernel_main(const boot_params_t *params) {
            params->video.cols,
            params->video.lines);
 
-  printf("%02o\n", 0x12);
-
   idt_setup();
 
   gdt_setup();
 
+  panic("Kernel panic test! %x", 0xdeadbeef);
+
+/*
   if (!cpuid_check()) {
-    //printf("CPUID instruction is not supported!\n");
-    for(;;);
+    panic("CPUID instruction is not supported!\n");
   }
-
-  //pmm_init(params->mmap, params->mmap_length);
-
-  //print_memory_map(params);
-
-  /*
-  rtc_datetime_t datetime = rtc_read_datetime();
-
-  printf("%d %d %d %d:%d:%d\n",
-    datetime.day,
-    datetime.month,
-    datetime.year,
-    datetime.hour,
-    datetime.minute,
-    datetime.second);
-  */
-
-  //pci_probe();
-
-  //int3();
+*/
 
   for (;;);
 }

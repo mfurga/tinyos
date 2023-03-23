@@ -1,23 +1,25 @@
 #include <kernel/panic.h>
+#include <kernel/common.h>
+#include <kernel/stdio.h>
 
-/*
-void NORETURN _panic(const char *file, int line, const char *fmt, ...) {
-  va_list l;
-  va_start(l, fmt);
+void NORETURN _panic(const char *file,
+                     const char *func,
+                     int line,
+                     const char *fmt,
+                     ...) {
+  va_list ap;
+  va_start(ap, fmt);
 
   printf(
     "\n"
-    "KERNEL PANIC at %s:%d :\n\n"
-    "%s\n"
-    "\n",
-    file, line, fmt
-  );
+    "=== KERNEL PANIC ===\n"
+    "Location : %s(), %s:%u\n\n", func, file, line);
+  vprintf(fmt, ap);
+  printf("\n\n");
 
-  for (;;) {
-    __asm__ __volatile__("int3;");
-  }
+  va_end(ap);
+  for (;;);
 }
-*/
 
 
 /*

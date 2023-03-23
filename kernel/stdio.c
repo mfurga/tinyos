@@ -19,7 +19,7 @@ static void printnum(void (*putc)(int, void *),
     }
   }
 
-  putc("0123456789abcedf"[num % base], context);
+  putc("0123456789abcdef"[num % base], context);
 }
 
 static long long getint(va_list *ap, unsigned long_type) {
