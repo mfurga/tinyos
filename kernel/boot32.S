@@ -18,9 +18,9 @@ entry32:
 
   // Clear BSS section.
   xor eax, eax
-  mov ecx, __bss_end
-  sub ecx, __bss_start
-  mov edi, __bss_start
+  mov ecx, __BSS_END
+  sub ecx, __BSS_START
+  mov edi, __BSS_START
   rep stosb
 
   // Pass the base address of boot_params_t structure.

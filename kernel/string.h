@@ -1,6 +1,8 @@
 #ifndef KERNEL_STRING_H
 #define KERNEL_STRING_H
 
+unsigned strlen(const char *s);
+
 void *memset(void *s, unsigned char c, unsigned n);
 
 void *memcpy(void *dst, void *src, unsigned n);

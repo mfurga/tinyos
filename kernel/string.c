@@ -1,5 +1,12 @@
 #include <kernel/string.h>
 
+unsigned strlen(const char *s) {
+  unsigned l;
+  for (l = 0; *s != '\0'; s++, l++)
+    ;
+  return l;
+}
+
 void *memset(void *s, unsigned char c, unsigned n) {
   __asm__ __volatile__(
     "mov edi, edx;"

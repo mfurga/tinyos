@@ -2,7 +2,7 @@
 
 /* Dirty alloc */
 
-#define HEAP_SIZE (1024 * 1024 * 4)
+#define HEAP_SIZE 1
 
 static u8 heap[HEAP_SIZE];  /* goes to BSS section */
 static u32 heap_ptr = 0;

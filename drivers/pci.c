@@ -1,7 +1,5 @@
 #include <drivers/pci.h>
 
-#include <kernel/video.h>
-
 /* PCI device classes */
 #define PCI_DEV_UNCLASSIFIED      0
 #define PCI_DEV_MSC               1  /* Mass Storage Controller */
@@ -59,16 +57,16 @@ static void pci_probe_func(u8 bus, u8 dev, u8 func) {
     /* no device. */
     return;
   }
-  u16 devid = pci_get_devid(bus, dev, func);
+  //u16 devid = pci_get_devid(bus, dev, func);
 
   u8 class = pci_get_class(bus, dev, func);
   u8 subclass = pci_get_subclass(bus, dev, func);
-  u8 htype = pci_get_header_type(bus, dev, func);
+  //u8 htype = pci_get_header_type(bus, dev, func);
 
   /* TODO: add device */
 
-  printf("%2x:%2x:%x %4x:%4x class: %x sub: %x htype: %x\n",
-    bus, dev, func, venid, devid, class, subclass, htype);
+  //printf("%2x:%2x:%x %4x:%4x class: %x sub: %x htype: %x\n",
+  //  bus, dev, func, venid, devid, class, subclass, htype);
 
   if (class == PCI_DEV_BRIDGE && subclass == PCI_DEV_BRIDGE_PCI2PCI) {
     pci_probe_bus(pci_get_secondary_bus(bus, dev, func));

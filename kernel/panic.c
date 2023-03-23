@@ -1,6 +1,26 @@
 #include <kernel/panic.h>
-#include <kernel/video.h>
 
+/*
+void NORETURN _panic(const char *file, int line, const char *fmt, ...) {
+  va_list l;
+  va_start(l, fmt);
+
+  printf(
+    "\n"
+    "KERNEL PANIC at %s:%d :\n\n"
+    "%s\n"
+    "\n",
+    file, line, fmt
+  );
+
+  for (;;) {
+    __asm__ __volatile__("int3;");
+  }
+}
+*/
+
+
+/*
 void NORETURN kernel_panic(const int_context_t *context) {
 
   printf(
@@ -21,5 +41,5 @@ void NORETURN kernel_panic(const int_context_t *context) {
 
   for (;;);
 }
-
+*/
 

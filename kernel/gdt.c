@@ -78,10 +78,10 @@ static gdtr_t gdtr = { .address = (u32)&gdt, .limit = sizeof(gdt) - 1 };
 
 void gdt_setup(void) {
   /* Runtime GDT entries initialization. */
-  // gdt_entry(GDT_ENTRY_TSS, (u32)&tss, (u32)&tss + sizeof(tss), GDT_TYPE_TSS_32_AVL |
-  //                                                              GDT_DPL_RING_3 |
-  //                                                              GDT_PRESENT |
-  //                                                              GDT_OP_SIZE_32);
+  gdt_entry(GDT_ENTRY_TSS, (u32)&tss, (u32)&tss + sizeof(tss), GDT_TYPE_TSS_32_AVL |
+                                                               GDT_DPL_RING_3 |
+                                                               GDT_PRESENT |
+                                                               GDT_OP_SIZE_32);
   // tss_setup();
 
   /* Flush memory-management registers. Init selectors. */

@@ -1,5 +1,5 @@
 /*
- * Linker script for the kernel code.
+ * Linker script for the kernel.
  */
 
 OUTPUT_FORMAT("elf32-i386", "elf32-i386", "elf32-i386")
@@ -9,6 +9,8 @@ ENTRY(entry32)
 SECTIONS
 {
   . = 0x100000;
+
+  __KERNEL_START = .;
 
   .text :
   {
@@ -25,9 +27,9 @@ SECTIONS
   . = ALIGN(0x10);
   .bss :
   {
-    __bss_start = .;
+    __BSS_START = .;
     *(.bss)
-    __bss_end = .;
+    __BSS_END = .;
   }
 
   /DISCARD/ :
@@ -35,5 +37,7 @@ SECTIONS
     *(.note*)
     *(.comment)
   }
+
+  __KERNEL_END = .;
 }
 

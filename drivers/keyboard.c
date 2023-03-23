@@ -1,13 +1,11 @@
-#include <kernel/ints/int_handlers.h>
 #include <kernel/common.h>
-#include <kernel/video.h>
+#include <kernel/ints/int_handlers.h>
 
 #define SC_MAX 57
 
 static const char kbdus[] = {
   '?', '?',
-  '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-  '-', '=',
+  '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=',
   '?', '?',
   'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']',
   '?', '?',
@@ -33,7 +31,8 @@ static void keyboard_handler(int_context_t *context) {
     return;
   }
 
-  putc(kbdus[scancode]);
+  char c = kbdus[scancode];
+  UNUSED(c);
 }
 
 void keyboard_init(void) {

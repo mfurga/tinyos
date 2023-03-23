@@ -33,7 +33,7 @@ OBJDUMP := $(CROSS_COMPILE)-objdump
 ASFLAGS := $(D) -I. -c
 CFLAGS := $(D) -Wall -Wextra -std=c11 -O2 -I. -ffreestanding -masm=intel
 
-LDFLASGS := -static -nostdlib -Tlinker.ld
+LDFLASGS := -lgcc -static -nostdlib -Tlinker.ld
 
 SRCS := $(shell find * -type f -name '*.[c|S]' -not -path 'bootloader/*')
 
@@ -50,7 +50,7 @@ $(BIMAGE): $(KIMAGE)
 
 $(KIMAGE): $(OBJS)
 	@echo "Linking ..."
-	$(Q)$(LD) $(OBJS) -o $@ $(LDFLASGS)
+	$(Q)$(CC) $(OBJS) -o $@ $(LDFLASGS)
 	@$(NM) $@ | awk '{ print $$1 " " $$3 }' >$(BUILD_DIR)/symbols
 ifeq ($(DEBUG), 0)
 	@$(STRIP) $@

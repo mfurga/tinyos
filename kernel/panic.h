@@ -1,6 +1,9 @@
 #pragma once
 
-#include <kernel/ints/int_handlers.h>
+#include <kernel/common.h>
 
-void NORETURN kernel_panic(const int_context_t *context);
+#define panic(...) _panic(__FILE__, __LINE__, __VA_ARGS__)
+
+void NORETURN _panic(const char *file, int line, const char *fmt, ...);
+
 

@@ -1,20 +1,20 @@
 #include <kernel/ints/int_handlers.h>
 #include <kernel/ints/pic.h>
-#include <kernel/panic.h>
-#include <kernel/video.h>
 
 static int_handler_t handlers[256];
 
 void CDECL isr_handler(int_context_t *context) {
-  printf("ISR interrupt %x %x\n", context->int_no, context->error_code);
+  UNUSED(context);
+
+  //printf("ISR interrupt %x %x\n", context->int_no, context->error_code);
 
   // TODO: Remove me.
-  kernel_panic(context);
+  //kernel_panic(context);
 }
 
 void CDECL irq_handler(int_context_t *context) {
   if (context->irq_no != 0) {
-    printf("IRQ no: %x IRQ no: %x\n", context->int_no, context->irq_no);
+    //printf("IRQ no: %x IRQ no: %x\n", context->int_no, context->irq_no);
   }
 
   int_handler_t handler = handlers[context->int_no];

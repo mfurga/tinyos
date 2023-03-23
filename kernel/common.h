@@ -2,8 +2,7 @@
  * Common headers.
  */
 
-#ifndef KERNEL_COMMON_H
-#define KERNEL_COMMON_H
+#pragma once
 
 #include <stdint.h>
 
@@ -105,6 +104,4 @@ static inline u32 get_eflags(void) {
       : "=a" (result));
   return result;
 }
-
-#endif  // KERNEL_COMMON_H
 
