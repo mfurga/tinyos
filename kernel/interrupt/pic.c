@@ -1,4 +1,4 @@
-#include <kernel/exception/pic.h>
+#include <kernel/interrupt/pic.h>
 
 #define PIC_MASTER_COMMNAD 0x20
 #define PIC_MASTER_DATA 0x21

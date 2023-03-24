@@ -1,6 +1,6 @@
 #define __ASSEMBLY__
 
-#include <kernel/gdt.h>
+#include <kernel/memory/gdt.h>
 
 .intel_syntax noprefix
 

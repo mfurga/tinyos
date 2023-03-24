@@ -36,7 +36,7 @@ typedef void (*int_handler_t)(int_context_t *);
 CDECL void isr_handler(int_context_t *context);
 CDECL void irq_handler(int_context_t *context);
 
-void int_handler_register(u8 int_no, int_handler_t handler);
+void int_handler_register(u8 excp_no, int_handler_t handler);
 
 #endif  // KERNEL_INTS_ISR_H
 

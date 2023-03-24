@@ -1,4 +1,4 @@
-#include <kernel/heap.h>
+#include <kernel/memory/heap.h>
 
 /* Dirty alloc */
 

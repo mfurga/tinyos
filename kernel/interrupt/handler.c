@@ -1,5 +1,5 @@
-#include <kernel/exception/handler.h>
-#include <kernel/exception/pic.h>
+#include <kernel/interrupt/handler.h>
+#include <kernel/interrupt/pic.h>
 
 static int_handler_t handlers[256];
 

@@ -1,9 +1,7 @@
 #include <kernel/boot/boot_params.h>
-#include <kernel/exception/idt.h>
+#include <kernel/interrupt/idt.h>
+#include <kernel/memory/gdt.h>
 #include <kernel/common.h>
-#include <kernel/pit.h>
-#include <kernel/gdt.h>
-#include <kernel/cpu.h>
 #include <kernel/stdio.h>
 #include <kernel/panic.h>
 
