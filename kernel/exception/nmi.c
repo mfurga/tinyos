@@ -1,4 +1,4 @@
-#include <kernel/ints/nmi.h>
+#include <kernel/exception/nmi.h>
 #include <kernel/common.h>
 
 /* CMOS */

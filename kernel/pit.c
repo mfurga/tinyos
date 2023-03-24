@@ -1,4 +1,4 @@
-#include <kernel/ints/int_handlers.h>
+#include <kernel/exception/handler.h>
 #include <kernel/pit.h>
 
 #define PIT_CHANNEL_0_PORT 0x40

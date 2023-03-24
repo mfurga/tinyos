@@ -1,5 +1,5 @@
 #include <kernel/common.h>
-#include <kernel/ints/int_handlers.h>
+#include <kernel/exception/handler.h>
 
 #define SC_MAX 57
 

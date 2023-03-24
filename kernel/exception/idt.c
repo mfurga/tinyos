@@ -1,5 +1,5 @@
-#include <kernel/ints/idt.h>
-#include <kernel/ints/pic.h>
+#include <kernel/exception/idt.h>
+#include <kernel/exception/pic.h>
 #include <kernel/gdt.h>
 
 static idt_entry_32_t idt[256] ALIGNED(16);
