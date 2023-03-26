@@ -1,7 +1,7 @@
 # Kernel makefile.
 
 VERBOSE := 0
-DEBUG := 0
+DEBUG := 1
 
 BUILD_DIR := build
 KIMAGE := $(BUILD_DIR)/kernel.elf
@@ -77,8 +77,7 @@ asm: all
 	$(OBJDUMP) -d $(KIMAGE) -Mintel
 
 .PHONY: run
-run: clean all
-	dd if=build/os.img of=build/test.img conv=notrunc
-	mv build/test.img build/os.img
-	bochs -f config/bochsrc -rc config/bochscmd
+run: all
+	./config/qemu.sh $(OS_IMAGE) $(DEBUG)
+	#bochs -f config/bochsrc -rc config/bochscmd
 
