@@ -1,2 +1,5 @@
 target remote localhost:9000
+set disassembly-flavor intel
+symbol-file build/kernel.elf
+set architecture i386
 
