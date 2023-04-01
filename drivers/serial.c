@@ -50,3 +50,4 @@ void serial_write(u8 ch) {
   outb(SERIAL_COM1_PORT + SERIAL_DATA_REG, ch);
 }
 
+

@@ -34,7 +34,6 @@ static inline void tss_flush(void);
 static inline void gdt_flush(void);
 static void tss_setup(void);
 
-
 static tss_t tss ALIGNED(16);
 
 static gdt_entry_t gdt[] ALIGNED(16) = {
@@ -82,10 +81,12 @@ void gdt_setup(void) {
                                                                GDT_DPL_RING_3 |
                                                                GDT_PRESENT |
                                                                GDT_OP_SIZE_32);
+
   // tss_setup();
 
   /* Flush memory-management registers. Init selectors. */
   gdt_flush();
+
   // tss_flush();
 }
 
@@ -130,3 +131,4 @@ static void gdt_entry(u32 no, u32 base, u32 limit, u32 flags) {
   gdt[no].flags_0_7 = (flags) & 0xff;
   gdt[no].flags_8_11 = ((flags) >> 8) & 0xf;
 }
+

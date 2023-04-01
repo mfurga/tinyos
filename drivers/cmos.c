@@ -10,6 +10,7 @@ u8 cmos_read(u8 reg) {
 
   outb(CMOS_ADDRESS_PORT, reg | 0x80 * nmi_disabled);
   io_delay();
+
   return inb(CMOS_DATA_PORT);
 }
 

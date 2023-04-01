@@ -104,4 +104,3 @@ static inline u32 get_eflags(void) {
       : "=a" (result));
   return result;
 }
-

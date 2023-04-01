@@ -2,13 +2,18 @@
 
 #include <kernel/common.h>
 
-#define MMAP_MAX_LENGTH 128
+#define MEMORY_MAP_MAX_SIZE        128
+
+#define MEMORY_MAP_TYPE_AVAILABLE  1
+#define MEMORY_MAP_TYPE_RESERVED   2
+#define MEMORY_MAP_TYPE_ACPI       3
+#define MEMORY_MAP_TYPE_NVS        4
 
 typedef struct {
   u64 base;
   u64 length;
   u32 type;
-} PACKED mmap_entry_t;
+} PACKED memory_map_entry_t;
 
 typedef struct boot_params_s {
   struct {
@@ -20,8 +25,8 @@ typedef struct boot_params_s {
     u8 lines;
   } video;
 
-  mmap_entry_t mmap[MMAP_MAX_LENGTH];
-  u16 mmap_length;
+  memory_map_entry_t memory_map[MEMORY_MAP_MAX_SIZE];
+  u16 memory_map_size;
 
 } PACKED boot_params_t;
 
