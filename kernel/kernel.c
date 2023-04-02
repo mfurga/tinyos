@@ -9,14 +9,27 @@
 #include <drivers/vga.h>
 #include <drivers/serial.h>
 
-void print_memory_map(const boot_params_t *params) {
-  printf("BIOS-e820 physical RAM map:\n");
-  for (u16 i = 0; i < params->memory_map_size; i++) {
-    printf("[%016llx - %016llx] %d\n",
-      params->memory_map[i].base,
-      params->memory_map[i].base + params->memory_map[i].length,
-      params->memory_map[i].type);
-  }
+extern void user_main(void);
+
+void switch_to_usermode(void (*entry_point)(void)) {
+
+  __asm__ __volatile__(
+    "mov ax, " STR(GDT_SEL_USER_DATA | GDT_SEL_RPL_3) ";"
+    "mov ds, ax;"
+    "mov es, ax;"
+    "mov fs, ax;"
+    "mov gs, ax;"
+
+    "mov eax, esp;"
+    "push " STR(GDT_SEL_USER_DATA | GDT_SEL_RPL_3) ";"
+    "push eax;"
+    "pushf;"
+    "push " STR(GDT_SEL_USER_CODE | GDT_SEL_RPL_3) ";"
+    "push ebx;"
+    "iret;"
+    : : "b"(entry_point)
+  );
+
 }
 
 void CDECL NORETURN kernel_main(const boot_params_t *params) {
@@ -35,16 +48,12 @@ void CDECL NORETURN kernel_main(const boot_params_t *params) {
 
   gdt_setup();
 
-  print_memory_map(params);
-
   pmm_init(params->memory_map,
            params->memory_map_size);
 
-/*
-  if (!cpuid_check()) {
-    panic("CPUID instruction is not supported!\n");
-  }
-*/
+  printf("Switching to usermode ...\n");
+
+  switch_to_usermode(user_main);
 
   for (;;);
 }

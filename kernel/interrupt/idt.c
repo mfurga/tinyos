@@ -12,7 +12,7 @@ static void idt_entry_set(u16 no, u32 handler, u16 seg, u8 type) {
   idt[no].offset_hi = (handler >> 16) & 0xffff;
   idt[no].segment = seg;
   idt[no].type = type;
-  idt[no].dpl = 0;
+  idt[no].dpl = 3;
   idt[no].present = 1;
   idt[no]._zero = 0;
 }

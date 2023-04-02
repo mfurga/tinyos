@@ -35,8 +35,7 @@ typedef struct {
   u32 address;
 } PACKED gdtr_t;
 
-typedef struct
-{
+typedef struct {
   u32 prev_tss;
   u32 esp0;
   u32 ss0;

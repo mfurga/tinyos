@@ -77,27 +77,23 @@ static gdtr_t gdtr = { .address = (u32)&gdt, .limit = sizeof(gdt) - 1 };
 
 void gdt_setup(void) {
   /* Runtime GDT entries initialization. */
-  gdt_entry(GDT_ENTRY_TSS, (u32)&tss, (u32)&tss + sizeof(tss), GDT_TYPE_TSS_32_AVL |
-                                                               GDT_DPL_RING_3 |
-                                                               GDT_PRESENT |
-                                                               GDT_OP_SIZE_32);
-
-  // tss_setup();
+  gdt_entry(GDT_ENTRY_TSS, (u32)&tss, sizeof(tss), GDT_TYPE_TSS_32_AVL |
+                                                   GDT_DPL_RING_0 |
+                                                   GDT_PRESENT |
+                                                   GDT_OP_SIZE_32);
+  tss_setup();
 
   /* Flush memory-management registers. Init selectors. */
   gdt_flush();
 
-  // tss_flush();
+  tss_flush();
 }
 
 static void tss_setup(void) {
   memset(&tss, 0, sizeof(tss));
 
-  tss.ss0 = GDT_SEL_KERNEL_CODE | GDT_SEL_RPL_0;
-  tss.esp0 = 0x7c00;  /* To change. */
-
-  tss.cs = GDT_SEL_KERNEL_CODE | GDT_SEL_RPL_3;
-  tss.ds = tss.ss = tss.es = tss.fs = tss.gs = GDT_SEL_KERNEL_DATA | GDT_SEL_RPL_3;
+  tss.ss0 = GDT_SEL_KERNEL_DATA | GDT_SEL_RPL_0;
+  tss.esp0 = 0x7c00;  /* TODO: Change. */
 }
 
 static inline void gdt_flush(void) {
@@ -117,7 +113,7 @@ static inline void gdt_flush(void) {
 
 static inline void tss_flush(void) {
   __asm__ __volatile__(
-    "mov ax, " STR(GDT_SEL_TSS | GDT_SEL_RPL_3) ";"
+    "mov ax, " STR(GDT_SEL_TSS | GDT_SEL_RPL_0) ";"
     "ltr ax;"
   );
 }
@@ -129,6 +125,6 @@ static void gdt_entry(u32 no, u32 base, u32 limit, u32 flags) {
   gdt[no].limit_0_15 = (limit) & 0xffff;
   gdt[no].limit_16_19 = ((limit) >> 16) & 0xf;
   gdt[no].flags_0_7 = (flags) & 0xff;
-  gdt[no].flags_8_11 = ((flags) >> 8) & 0xf;
+  gdt[no].flags_8_11 = (flags >> 8) & 0xf;
 }
 
