@@ -1,20 +1,20 @@
 #pragma once
 
-#define GDT_ENTRY_NULL        0
-#define GDT_ENTRY_KERNEL_CODE 1
-#define GDT_ENTRY_KERNEL_DATA 2
-#define GDT_ENTRY_USER_CODE   3
-#define GDT_ENTRY_USER_DATA   4
-#define GDT_ENTRY_TSS         5
+#define GDT_ENTRY_NULL          0
+#define GDT_ENTRY_KERNEL_CODE   1
+#define GDT_ENTRY_KERNEL_DATA   2
+#define GDT_ENTRY_USER_CODE     3
+#define GDT_ENTRY_USER_DATA     4
+#define GDT_ENTRY_TSS           5
 
-#define GDT_SEL_RPL_0         0
-#define GDT_SEL_RPL_3         3
+#define GDT_SEL_RPL_0           0
+#define GDT_SEL_RPL_3           3
 
-#define GDT_SEL_KERNEL_CODE ((GDT_ENTRY_KERNEL_CODE) << 3)
-#define GDT_SEL_KERNEL_DATA ((GDT_ENTRY_KERNEL_DATA) << 3)
-#define GDT_SEL_USER_CODE   ((GDT_ENTRY_USER_CODE) << 3)
-#define GDT_SEL_USER_DATA   ((GDT_ENTRY_USER_DATA) << 3)
-#define GDT_SEL_TSS         ((GDT_ENTRY_TSS) << 3)
+#define GDT_SEL_KERNEL_CODE     ((GDT_ENTRY_KERNEL_CODE) << 3)
+#define GDT_SEL_KERNEL_DATA     ((GDT_ENTRY_KERNEL_DATA) << 3)
+#define GDT_SEL_USER_CODE       ((GDT_ENTRY_USER_CODE) << 3)
+#define GDT_SEL_USER_DATA       ((GDT_ENTRY_USER_DATA) << 3)
+#define GDT_SEL_TSS             ((GDT_ENTRY_TSS) << 3)
 
 #ifndef __ASSEMBLY__
 

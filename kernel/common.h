@@ -33,6 +33,17 @@ static inline void int3(void) {
   __asm__ __volatile__ ("int3");
 }
 
+static inline void iopl(u32 level) {
+  __asm__ __volatile__(
+    "pushf;"
+    "pop eax;"
+    "or eax, edx;"
+    "push eax;"
+    "popf;"
+    : : "d"(level << 12)
+  );
+}
+
 static inline u8 inb(u16 port) {
   u8 result;
   __asm__ __volatile__ ("in al, dx" : "=a" (result) : "d" (port));
