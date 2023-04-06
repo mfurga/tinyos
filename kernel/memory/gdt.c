@@ -90,23 +90,6 @@ void gdt_setup(void) {
   tss_flush();
 }
 
-void print_tss(void) {
-
-  printf(
-    "TSS:\n"
-    "cs:     %02xh\n"
-    "eip:    %08xh\n"
-    "eflags: %08xh\n"
-    "eax: %08xh  ebx: %08xh  ecx: %08xh  edx: %08xh\n"
-    "esi: %08xh  edi: %08xh  ebp: %08xh  esp: %08xh\n"
-    "\n",
-    tss.cs, tss.eip, tss.eflags,
-    tss.eax, tss.ebx, tss.ecx, tss.edx,
-    tss.esi, tss.edi, tss.ebp, tss.esp
-  );
-
-}
-
 static void tss_setup(void) {
   memset(&tss, 0, sizeof(tss));
 

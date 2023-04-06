@@ -2,6 +2,7 @@
 #include <kernel/interrupt/idt.h>
 #include <kernel/memory/gdt.h>
 #include <kernel/memory/pmm.h>
+#include <kernel/syscall.h>
 #include <kernel/common.h>
 #include <kernel/stdio.h>
 #include <kernel/panic.h>
@@ -14,6 +15,7 @@ extern void user_main(void);
 void switch_to_usermode(void (*entry_point)(void)) {
 
   __asm__ __volatile__(
+    "cli;"
     "mov ax, " STR(GDT_SEL_USER_DATA | GDT_SEL_RPL_3) ";"
     "mov ds, ax;"
     "mov es, ax;"
@@ -24,6 +26,7 @@ void switch_to_usermode(void (*entry_point)(void)) {
     "push " STR(GDT_SEL_USER_DATA | GDT_SEL_RPL_3) ";"
     "push eax;"
     "pushf;"
+    "or dword ptr [esp], 0x200;" /* IF = 1 */
     "push " STR(GDT_SEL_USER_CODE | GDT_SEL_RPL_3) ";"
     "push ebx;"
     "iret;"
@@ -44,12 +47,16 @@ void CDECL NORETURN kernel_main(const boot_params_t *params) {
 
   printf("Kernel starting ...\n");
 
+  gdt_setup();
+
   idt_setup();
 
-  gdt_setup();
+  sti();
 
   pmm_init(params->memory_map,
            params->memory_map_size);
+
+  syscall_init();
 
   printf("Switching to usermode ...\n");
 

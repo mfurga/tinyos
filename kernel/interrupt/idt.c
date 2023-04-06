@@ -11,31 +11,6 @@
 #define DPL_RING_0        0
 #define DPL_RING_3        3
 
-#define X86_INT_DE        0x00
-#define X86_INT_DB        0x01
-#define X86_INT_NMI       0x02
-#define X86_INT_BP        0x03
-#define X86_INT_OF        0x04
-#define X86_INT_BR        0x05
-#define X86_INT_UD        0x06
-#define X86_INT_NM        0x07
-#define X86_INT_DF        0x08
-#define X86_INT_CSO       0x09
-#define X86_INT_TS        0x0a
-#define X86_INT_NP        0x0b
-#define X86_INT_SS        0x0c
-#define X86_INT_GP        0x0d
-#define X86_INT_PF        0x0e
-/* reserved */
-#define X86_INT_MF        0x10
-#define X86_INT_AC        0x11
-#define X86_INT_MC        0x12
-#define X86_INT_XM        0x13
-#define X86_INT_VR        0x14
-#define X86_INT_CP        0x15
-
-#define X86_IRQ_OFFSET    0x20
-
 /* Interrupt gate */
 #define INTG(_no, _addr) \
   idt_entry_set(_no, GDT_SEL_KERNEL_CODE | GDT_SEL_RPL_0, _addr, IDT_GATE_INT32, DPL_RING_0)
@@ -65,6 +40,7 @@ extern void isr_machine_check(void);
 extern void isr_simd_floating_point(void);
 extern void isr_virtualization(void);
 extern void isr_control_protection(void);
+extern void isr_syscall_vector(void);
 
 extern void irq0(void);
 extern void irq1(void);
@@ -132,27 +108,30 @@ void idt_setup(void) {
   INTG(X86_INT_GP, (u32)isr_general_protection);
   INTG(X86_INT_PF, (u32)isr_page_fault);
 
-  /* 32-255: User defined interrupts. */
+  SYSG(SYSCALL_VECTOR, (u32)isr_syscall_vector);
 
-  /* Set the master PIC's offset to 0x20 and the slave's to 0x28. */
-  pic_remap(0x20, 0x28);
+  /*
+    Set the master PIC's offset to IRQ_OFFSET and the slave's
+    to IRQ_OFFSET + 8.
+  */
+  pic_remap(IRQ_OFFSET, IRQ_OFFSET + 8);
 
-  INTG(X86_IRQ_OFFSET + 0, (u32)irq0);
-  INTG(X86_IRQ_OFFSET + 1, (u32)irq1);
-  INTG(X86_IRQ_OFFSET + 2, (u32)irq2);
-  INTG(X86_IRQ_OFFSET + 3, (u32)irq3);
-  INTG(X86_IRQ_OFFSET + 4, (u32)irq4);
-  INTG(X86_IRQ_OFFSET + 5, (u32)irq5);
-  INTG(X86_IRQ_OFFSET + 6, (u32)irq6);
-  INTG(X86_IRQ_OFFSET + 7, (u32)irq7);
-  INTG(X86_IRQ_OFFSET + 8, (u32)irq8);
-  INTG(X86_IRQ_OFFSET + 9, (u32)irq9);
-  INTG(X86_IRQ_OFFSET + 10, (u32)irq10);
-  INTG(X86_IRQ_OFFSET + 11, (u32)irq11);
-  INTG(X86_IRQ_OFFSET + 12, (u32)irq12);
-  INTG(X86_IRQ_OFFSET + 13, (u32)irq13);
-  INTG(X86_IRQ_OFFSET + 14, (u32)irq14);
-  INTG(X86_IRQ_OFFSET + 15, (u32)irq15);
+  INTG(IRQ_OFFSET + 0, (u32)irq0);
+  INTG(IRQ_OFFSET + 1, (u32)irq1);
+  INTG(IRQ_OFFSET + 2, (u32)irq2);
+  INTG(IRQ_OFFSET + 3, (u32)irq3);
+  INTG(IRQ_OFFSET + 4, (u32)irq4);
+  INTG(IRQ_OFFSET + 5, (u32)irq5);
+  INTG(IRQ_OFFSET + 6, (u32)irq6);
+  INTG(IRQ_OFFSET + 7, (u32)irq7);
+  INTG(IRQ_OFFSET + 8, (u32)irq8);
+  INTG(IRQ_OFFSET + 9, (u32)irq9);
+  INTG(IRQ_OFFSET + 10, (u32)irq10);
+  INTG(IRQ_OFFSET + 11, (u32)irq11);
+  INTG(IRQ_OFFSET + 12, (u32)irq12);
+  INTG(IRQ_OFFSET + 13, (u32)irq13);
+  INTG(IRQ_OFFSET + 14, (u32)irq14);
+  INTG(IRQ_OFFSET + 15, (u32)irq15);
 
   __asm__ __volatile__("lidt %0" : : "m" (idtr32));
 }

@@ -25,8 +25,8 @@
 .macro IRQ irq_no
   .globl irq\irq_no
   irq\irq_no:
-    pushd \irq_no       // IRQ number (0-15).
-    pushd 32 + \irq_no  // Mapped interrupt number.
+    pushd \irq_no
+    pushd 32 + \irq_no  // FIXME: 32?
     jmp irq_common_stub
 .endm
 
@@ -185,6 +185,8 @@ ISR_WITH_ERROR_CODE 30, "reserved_30"
 // Reserved
 ISR_WITHOUT_ERROR_CODE 31, "reserved_31"
 
+ISR_WITHOUT_ERROR_CODE 0x80, "syscall_vector"
+
 IRQ 0
 IRQ 1
 IRQ 2
@@ -201,3 +203,4 @@ IRQ 12
 IRQ 13
 IRQ 14
 IRQ 15
+

@@ -3,7 +3,7 @@
 void user_main(void) {
 
   __asm__ __volatile__(
-    "int3;"
+    "int 0x80;"
   );
 
   for (;;);
