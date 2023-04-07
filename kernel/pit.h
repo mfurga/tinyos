@@ -1,9 +1,6 @@
-#ifndef KERNEL_PIT_H
-#define KERNEL_PIT_H
+#pragma once
 
-#include <kernel/common.h>
+#include <lib/common.h>
 
 void pit_init(u32 freq);
-
-#endif  // KERNEL_PIT_H
 

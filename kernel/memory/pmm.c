@@ -4,7 +4,7 @@
 
 #include <kernel/memory/pmm.h>
 #include <kernel/panic.h>
-#include <kernel/string.h>
+#include <lib/string.h>
 
 #define BLOCK_INFO_SIZE   (PMM_BLOCK_COUNT / 32)
 

@@ -1,5 +1,7 @@
 #include <kernel/interrupt/handler.h>
+#include <kernel/interrupt/idt.h>
 #include <kernel/pit.h>
+#include <lib/x86.h>
 
 #define PIT_CHANNEL_0_PORT 0x40
 #define PIT_CHANNEL_1_PORT 0x41

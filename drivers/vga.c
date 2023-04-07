@@ -1,5 +1,6 @@
-#include <kernel/common.h>
-#include <kernel/string.h>
+#include <lib/common.h>
+#include <lib/x86.h>
+#include <lib/string.h>
 
 #include <drivers/vga.h>
 

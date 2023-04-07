@@ -3,9 +3,9 @@
 #include <kernel/memory/gdt.h>
 #include <kernel/memory/pmm.h>
 #include <kernel/syscall.h>
-#include <kernel/common.h>
 #include <kernel/stdio.h>
 #include <kernel/panic.h>
+#include <lib/x86.h>
 
 #include <drivers/vga.h>
 #include <drivers/serial.h>

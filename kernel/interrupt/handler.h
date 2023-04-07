@@ -1,6 +1,6 @@
 #pragma once
 
-#include <kernel/common.h>
+#include <lib/common.h>
 
 typedef struct int_context {
   u32 ds;

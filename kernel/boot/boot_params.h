@@ -1,6 +1,6 @@
 #pragma once
 
-#include <kernel/common.h>
+#include <lib/common.h>
 
 #define MEMORY_MAP_MAX_SIZE        128
 

@@ -2,6 +2,7 @@
 #include <kernel/interrupt/pic.h>
 #include <kernel/stdio.h>
 #include <kernel/panic.h>
+#include <lib/x86.h>
 
 static int_handler_t handlers[256];
 

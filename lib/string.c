@@ -1,4 +1,4 @@
-#include <kernel/string.h>
+#include <lib/string.h>
 
 unsigned strlen(const char *s) {
   unsigned l;

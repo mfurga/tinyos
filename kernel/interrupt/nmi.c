@@ -1,5 +1,6 @@
 #include <kernel/interrupt/nmi.h>
-#include <kernel/common.h>
+#include <lib/common.h>
+#include <lib/x86.h>
 
 /* CMOS */
 #define NMI_ADDRESS_PORT 0x70

@@ -1,4 +1,5 @@
 #include <drivers/serial.h>
+#include <lib/x86.h>
 
 static inline void serial_set_baud_rate(u16 port, u16 baud_rate) {
   u8 t = inb(port | SERIAL_LCR_REG);

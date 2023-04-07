@@ -1,6 +1,6 @@
 #include <kernel/panic.h>
-#include <kernel/common.h>
 #include <kernel/stdio.h>
+#include <stdarg.h>
 
 void NORETURN _panic(const char *func,
                      const char *file,

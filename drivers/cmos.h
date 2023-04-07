@@ -1,6 +1,6 @@
 #pragma once
 
-#include <kernel/common.h>
+#include <lib/common.h>
 
 #define CMOS_REG_RTC_SECOND   0x00
 #define CMOS_REG_RTC_MINUTE   0x02

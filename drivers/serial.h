@@ -1,6 +1,6 @@
 #pragma once
 
-#include <kernel/common.h>
+#include <lib/common.h>
 
 #define SERIAL_COM1_PORT         0x3f8
 #define SERIAL_COM2_PORT         0x2f8

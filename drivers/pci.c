@@ -1,4 +1,6 @@
 #include <drivers/pci.h>
+#include <lib/common.h>
+#include <lib/x86.h>
 
 /* PCI device classes */
 #define PCI_DEV_UNCLASSIFIED      0

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <kernel/common.h>
+#include <lib/common.h>
 
 typedef struct {
   u8 second;

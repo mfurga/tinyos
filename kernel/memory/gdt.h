@@ -18,7 +18,7 @@
 
 #ifndef __ASSEMBLY__
 
-#include <kernel/common.h>
+#include <lib/common.h>
 
 typedef struct {
   u16 limit_0_15;

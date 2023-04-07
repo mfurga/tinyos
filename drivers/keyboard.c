@@ -1,5 +1,7 @@
-#include <kernel/common.h>
 #include <kernel/interrupt/handler.h>
+#include <kernel/interrupt/idt.h>
+#include <lib/common.h>
+#include <lib/x86.h>
 
 #define SC_MAX 57
 

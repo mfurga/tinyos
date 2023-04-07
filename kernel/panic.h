@@ -1,6 +1,6 @@
 #pragma once
 
-#include <kernel/common.h>
+#include <lib/common.h>
 
 #define panic(...) _panic(__FUNCTION__, __FILE__, __LINE__, __VA_ARGS__)
 

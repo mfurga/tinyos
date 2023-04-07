@@ -1,6 +1,6 @@
 #pragma once
 
-#include <kernel/common.h>
+#include <lib/common.h>
 
 #define X86_INT_DE        0x00
 #define X86_INT_DB        0x01
