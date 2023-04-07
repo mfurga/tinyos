@@ -1,5 +1,4 @@
 #include <kernel/stdio.h>
-#include <lib/string.h>
 #include <lib/printf.h>
 
 #include <drivers/serial.h>

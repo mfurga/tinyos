@@ -7,3 +7,7 @@ void vprintfmt(void (*putc)(int, void *),
                const char *fmt,
                va_list ap);
 
+int vsnprintf(char *str, unsigned size, const char *fmt, va_list ap);
+
+int snprintf(char *str, unsigned size, const char *fmt, ...);
+

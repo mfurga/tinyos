@@ -162,3 +162,40 @@ void vprintfmt(void (*putc)(int, void *),
   }
 }
 
+struct snprintf_buf {
+  char *str;
+  unsigned size;
+  unsigned cnt;
+};
+
+static void snprintf_putc(int ch, struct snprintf_buf *buf) {
+  if (buf->cnt < buf->size) {
+    *buf->str++ = ch;
+    buf->cnt++;
+  }
+}
+
+int vsnprintf(char *str, unsigned size, const char *fmt, va_list ap) {
+  struct snprintf_buf buf = { .str = str, .size = size - 1, .cnt = 0 };
+
+  if (str == NULL || size == 0) {
+    return -1;
+  }
+
+  vprintfmt((void *)snprintf_putc, &buf, fmt, ap);
+
+  *buf.str = '\0';
+  return (int)buf.cnt;
+}
+
+int snprintf(char *str, unsigned size, const char *fmt, ...) {
+  va_list ap;
+  int cnt;
+
+  va_start(ap, fmt);
+  cnt = vsnprintf(str, size, fmt, ap);
+  va_end(ap);
+
+  return cnt;
+}
+
