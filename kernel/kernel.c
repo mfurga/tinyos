@@ -9,6 +9,9 @@
 
 #include <drivers/vga.h>
 #include <drivers/serial.h>
+#include <drivers/keyboard.h>
+#include <drivers/rtc.h>
+#include <drivers/pci.h>
 
 extern void user_main(void);
 
@@ -52,6 +55,8 @@ void CDECL NORETURN kernel_main(const boot_params_t *params) {
   idt_setup();
 
   sti();
+
+  pci_init();
 
   pmm_init(params->memory_map,
            params->memory_map_size);

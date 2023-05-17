@@ -574,8 +574,8 @@ mouse: enabled=0
 # Example:
 #   pci: enabled=1, chipset=i440fx, slot1=pcivga, slot2=ne2k, advopts=noacpi
 #=======================================================================
-#pci: enabled=1, chipset=i440fx, slot1=e1000, slot2=usb_ehci
-pci: enabled=1, chipset=i440fx
+pci: enabled=1, chipset=i440fx, slot1=e1000
+#pci: enabled=1, chipset=i440fx
 
 #=======================================================================
 # CLOCK:
@@ -1093,7 +1093,7 @@ sound: enabled=0
 #
 #=======================================================================
 # ne2k: ioaddr=0x300, irq=9, mac=fe:fd:00:00:00:01, ethmod=fbsd, ethdev=en0 #macosx
-# ne2k: ioaddr=0x300, irq=9, mac=b0:c4:20:00:00:00, ethmod=fbsd, ethdev=xl0
+#ne2k: ioaddr=0x300, irq=9, mac=b0:c4:20:00:00:00, ethmod=fbsd, ethdev=xl0
 # ne2k: ioaddr=0x300, irq=9, mac=b0:c4:20:00:00:00, ethmod=linux, ethdev=eth0
 # ne2k: ioaddr=0x300, irq=9, mac=b0:c4:20:00:00:01, ethmod=win32, ethdev=MYCARD
 # ne2k: ioaddr=0x300, irq=9, mac=fe:fd:00:00:00:01, ethmod=tap, ethdev=tap0
@@ -1128,7 +1128,10 @@ sound: enabled=0
 # bootrom) and supports the same networking modules as the NE2000 adapter.
 # It also supports up to 4 devices selected with the card parameter.
 #=======================================================================
-#e1000: enabled=1, mac=52:54:00:12:34:56, ethmod=slirp, script=slirp.conf
+e1000: enabled=1, mac=52:54:00:12:34:56, ethmod=slirp, script=slirp.conf
+#e1000: enabled=1, mac=52:54:00:12:34:56, ethmod=linux, ethdev=enp0s31f6
+
+# ne2k: ioaddr=0x300, irq=9, mac=b0:c4:20:00:00:01, ethmod=vnet, ethdev="c:/temp"
 
 #=======================================================================
 # USB_UHCI:
