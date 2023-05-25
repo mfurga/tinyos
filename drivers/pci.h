@@ -5,12 +5,33 @@
 #define PCI_CONFIG_ADDR_PORT      0xcf8
 #define PCI_CONFIG_DATA_PORT      0xcfc
 
+#define PCI_BAR_TYPE(bar)         ((bar) & PCI_BAR_TYPE_MASK)
+#define PCI_BAR_TYPE_MASK         0x00000001
+#define PCI_BAR_TYPE_MEM          0x00000000
+#define PCI_BAR_TYPE_IO           0x00000001
+
+#define PCI_BAR_MEM_TYPE(bar)     ((bar) & PCI_BAR_MEM_TYPE_MASK)
+#define PCI_BAR_MEM_TYPE_MASK     0x00000006
+#define PCI_BAR_MEM_TYPE_32       0x00000000
+#define PCI_BAR_MEM_TYPE_64       0x00000004
+
+#define PCI_BAR_MEM_ADDR(bar)     ((bar) & PCI_BAR_MEM_ADDR_MASK)
+#define PCI_BAR_MEM_ADDR_MASK     0xfffffff0
+#define PCI_BAR_MEM_SIZE(bar)     (~(bar) + 1)
+
+#define PCI_BAR_IO_ADDR(bar)      ((bar) & PCI_BAR_IO_ADDR_MASK)
+#define PCI_BAR_IO_ADDR_MASK      0xfffffffc
+#define PCI_BAR_IO_SIZE(bar)      (~(bar) + 1)
+
 #define PCI_REG_POS(offset, low, high) \
   ((offset) | ((low) << 8) | ((high) << 16))
 
 #define PCI_REG_POS_OFFSET(pos)   ((pos) & 0xff)
 #define PCI_REG_POS_LOW(pos)      (((pos) >> 8) & 0xff)
 #define PCI_REG_POS_HIGH(pos)     (((pos) >> 16) & 0xff)
+
+#define PCI_REG_POS_ADD_OFFSET(pos, offset) \
+  ((pos) + (offset))
 
 /* PCI device registers */
 #define PCI_REG_VENID             PCI_REG_POS(0x0, 0, 15)
@@ -28,7 +49,11 @@
 #define PCI_REG_BAR_START         PCI_REG_POS(0x10, 0, 31)
 #define PCI_REG_BAR_END           PCI_REG_POS(0x24, 0, 31)
 
+#define PCI_REG_BAR_NUM(pos) \
+  (((pos) - PCI_REG_BAR_START) / 4)
+
 #define PCI_REG_SEC_BUS           PCI_REG_POS(0x18, 8, 15)
+
 
 /* PCI device classes */
 #define PCI_DEV_UNCLASSIFIED      0
@@ -58,14 +83,16 @@ typedef struct pci_dev {
   u8 class;         /* Class register */
   u8 subclass;      /* Subclass register */
 
-  u32 bar[6];       /* BARs */
-  u32 bar_size[6];  /* BARs sizes */
+  u32 bar_addr[6];  /* BARs addr */
+  u32 bar_size[6];  /* BARs size */
 
 } pci_dev_t;
 
 void pci_init(void);
 
-u32 pci_conf_read(const struct pci_dev *dev, u32 offset);
+void pci_dev_enable(struct pci_dev *dev);
 
-void pci_conf_write(const struct pci_dev *dev, u32 offset, u32 value);
+u32 pci_conf_read(const struct pci_dev *dev, u32 pos);
+
+void pci_conf_write(const struct pci_dev *dev, u32 pos, u32 value);
 

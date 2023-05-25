@@ -4,17 +4,17 @@
 #include <lib/x86.h>
 
 /* Drivers */
-//#include <drivers/e1000.h>
+#include <drivers/e1000.h>
 
 struct pci_driver {
   u16 venid;
   u16 devid;
-  int (*attach)(const struct pci_dev *dev);
+  int (*attach)(struct pci_dev *dev);
 };
 
 static struct pci_driver pci_driver_table[] = {
-  //{ .venid = 0x8086, .devid = 0x10ea, .attach = &e1000_attach },
-  //{ .venid = 0x8086, .devid = 0x100e, .attach = &e1000_attach },
+  { .venid = 0x8086, .devid = 0x10ea, .attach = &e1000_attach },
+  { .venid = 0x8086, .devid = 0x100e, .attach = &e1000_attach },
   { 0, 0, NULL }
 };
 
@@ -52,7 +52,7 @@ void pci_conf_write(const struct pci_dev *dev, u32 pos, u32 value) {
   outd(PCI_CONFIG_DATA_PORT, value);
 }
 
-static void pci_attach_driver(const struct pci_dev *dev) {
+static void pci_attach_driver(struct pci_dev *dev) {
   struct pci_driver *driver;
   int r;
 
@@ -60,30 +60,54 @@ static void pci_attach_driver(const struct pci_dev *dev) {
     if (dev->venid == driver->venid && dev->devid == driver->devid) {
       r = driver->attach(dev);
       if (r != 0) {
-        printf("Failed to attach driver to device (%02x, %02x)\n",
+        printf("Failed to attach driver to device %04x:%04x\n",
           dev->venid, dev->devid);
       }
     }
   }
 }
 
-/*
-void pci_dev_enable(const struct pci_dev *dev) {
+void pci_dev_enable(struct pci_dev *dev) {
+  u32 bar;
+  u32 addr, size;
+
   pci_conf_write(dev, PCI_REG_COMMAND,
                  PCI_COMMAND_MASTER_ENABLE |
                  PCI_COMMAND_IO_ENABLE |
                  PCI_COMMAND_MEM_ENABLE);
-  u32 bar;
-  u32 bar_size;
 
-  for (bar = PCI_REG_BAR_START; bar < PCI_REG_BAR_END; ) {
-    u32 current = pci_conf_read(dev, bar);
+  for (bar = PCI_REG_BAR_START; bar < PCI_REG_BAR_END;
+       bar = PCI_REG_POS_ADD_OFFSET(bar, 4)) {
+    int regnum = PCI_REG_BAR_NUM(bar);
+
+    u32 old = pci_conf_read(dev, bar);
     pci_conf_write(dev, bar, 0xffffffff);
+    u32 cur = pci_conf_read(dev, bar);
 
-    //pci_conf_read(dev, 
+    if (PCI_BAR_TYPE(old) == PCI_BAR_TYPE_MEM) {
+      /* Memory space BAR. */
+      if (PCI_BAR_MEM_TYPE(old) == PCI_BAR_MEM_TYPE_64) {
+        /* Not supported. */
+        bar = PCI_REG_POS_ADD_OFFSET(bar, 4);
+        continue;
+      }
+      addr = PCI_BAR_MEM_ADDR(old);
+      size = PCI_BAR_MEM_SIZE(cur);
+    } else {
+      /* IO space BAR. */
+      addr = PCI_BAR_IO_ADDR(old);
+      size = PCI_BAR_IO_SIZE(cur);
+    }
+
+    pci_conf_write(dev, bar, old);
+
+    dev->bar_addr[regnum] = addr;
+    dev->bar_size[regnum] = size;
+
+    printf("%02x:%02x.%d (%04x:%04x) reg=%d base=0x%08x addr=0x%08x\n",
+      dev->bus, dev->dev, dev->func, dev->venid, dev->devid, regnum, addr, size);
   }
 }
-*/
 
 static void pci_probe_bus(u8 bus);
 
