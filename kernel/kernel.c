@@ -12,6 +12,7 @@
 #include <drivers/keyboard.h>
 #include <drivers/rtc.h>
 #include <drivers/pci.h>
+#include <drivers/e1000.h>
 
 extern void user_main(void);
 
@@ -63,9 +64,23 @@ void CDECL NORETURN kernel_main(const boot_params_t *params) {
 
   syscall_init();
 
+  u8 buf[2048];
+  int r;
+
+  while (1) {
+    r = e1000_receive(buf, sizeof(buf));
+    if (r > 0) {
+      printf("E1000 RECV!\n");
+      printf("%02x %02x %02x %02x ...\n",
+        buf[0], buf[1], buf[2], buf[3]);
+    }
+  }
+
+  /*
   printf("Switching to usermode ...\n");
 
   switch_to_usermode(user_main);
+  */
 
   for (;;);
 }
