@@ -29,7 +29,7 @@ void CDECL isr_handler(int_context_t *context) {
 
 void CDECL irq_handler(int_context_t *context) {
   if (context->irq_no != 0) {
-    //printf("CS: %x IRQ no: %x IRQ no: %x\n", context->cs, context->int_no, context->irq_no);
+    //printf("INT no: %x IRQ no: %x\n", context->int_no, context->irq_no);
   }
 
   int_handler_t handler = handlers[context->int_no];

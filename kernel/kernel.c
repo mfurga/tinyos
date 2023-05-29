@@ -14,6 +14,8 @@
 #include <drivers/pci.h>
 #include <drivers/e1000.h>
 
+#include <net/ethernet.h>
+
 extern void user_main(void);
 
 void switch_to_usermode(void (*entry_point)(void)) {
@@ -70,9 +72,7 @@ void CDECL NORETURN kernel_main(const boot_params_t *params) {
   while (1) {
     r = e1000_receive(buf, sizeof(buf));
     if (r > 0) {
-      printf("E1000 RECV!\n");
-      printf("%02x %02x %02x %02x ...\n",
-        buf[0], buf[1], buf[2], buf[3]);
+      ethernet_parse(buf, r);
     }
   }
 

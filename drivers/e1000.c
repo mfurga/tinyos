@@ -43,6 +43,10 @@
 #define RCTL_OFFSET (0x00100 / 4)
 #define RCTL mmio_base[RCTL_OFFSET]
 
+/* Interrupt Cause Read Register */
+#define ICR_OFFSET (0x000c0 / 4)
+#define ICR mmio_base[ICR_OFFSET]
+
 #define RAH_AV          (1 << 31)
 
 #define RCTL_EN         (1 <<  1)
@@ -126,7 +130,6 @@ void read_mac(const struct pci_dev *dev, u8 *mac) {
 */
 
 static int e1000_rx_init(void) {
-  printf("RX INIT\n");
   /*
     RX initialization based on Section 14.4.
   */
@@ -157,7 +160,8 @@ static int e1000_rx_init(void) {
     Suggested bits include RXT, RXO, RXDMT, RXSEQ, and LSC. There is no
     immediate reason to enable the transmit interrupts.
   */
-  IMS = 0; /* no interrupts */
+
+  /* Done in e1000_interrupt_enable() */
 
   /*
     If software uses the Receive Descriptor Minimum Threshold Interrupt,
@@ -215,6 +219,12 @@ static int e1000_rx_init(void) {
   return 0;
 }
 
+void e1000_interrupt_enable(void) {
+  //IMS = 0x1F6DC;
+  //IMS = 0xff & ~4;
+  IMS = 0xffffffff;
+}
+
 int e1000_receive(u8 *buf, unsigned int size) {
   int idx = (RDT + 1) % RX_DESC_ARRAY_SIZE;
   e1000_rx_desc_t *desc = &rx_desc_array[idx];
@@ -254,6 +264,7 @@ int e1000_attach(struct pci_dev *dev) {
 
   printf("%08x\n", mmio_base[2]);
 
+  e1000_interrupt_enable();
   e1000_rx_init();
 
 /*

@@ -48,6 +48,8 @@
 #define PCI_REG_BIST              PCI_REG_POS(0xc, 24, 31)
 #define PCI_REG_BAR_START         PCI_REG_POS(0x10, 0, 31)
 #define PCI_REG_BAR_END           PCI_REG_POS(0x24, 0, 31)
+#define PCI_REG_INT_LINE          PCI_REG_POS(0x3c, 0, 7)
+#define PCI_REG_INT_PIN           PCI_REG_POS(0x3c, 15, 8)
 
 #define PCI_REG_BAR_NUM(pos) \
   (((pos) - PCI_REG_BAR_START) / 4)
