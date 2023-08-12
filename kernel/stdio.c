@@ -6,7 +6,7 @@
 
 static void putc(int ch, int *cnt) {
   vga_putc(ch);
-  serial_write(ch);
+  serial_write(COM1, ch);
   (*cnt)++;
 }
 

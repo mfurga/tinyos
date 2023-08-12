@@ -1,60 +1,12 @@
-#include <drivers/serial/serial.h>
+#include <lib/common.h>
 #include <lib/x86.h>
 
-static inline void serial_set_baud_rate(u16 port, u16 baud_rate) {
-  u8 t = inb(port | SERIAL_LCR_REG);
-
-  outb(port + SERIAL_LCR_REG, t | SERIAL_DLAB);   /* Set DLAB */
-
-  outb(port + SERIAL_DIVISOR_LO_REG, baud_rate & 0xff);
-  outb(port + SERIAL_DIVISOR_HI_REG, baud_rate >> 8);
-
-  outb(port + SERIAL_LCR_REG, t & ~SERIAL_DLAB);  /* Clear DLAB */
-}
-
-static inline void serial_set_format(u16 port, u8 flags) {
-  outb(port + SERIAL_LCR_REG, flags);
-}
-
-static void serial_init_port(u16 port) {
-
-  /* Disable interrupts */
-  outb(port + SERIAL_INTERRUPT_REG, 0);
-
-  /* Baud rate 9600 */
-  serial_set_baud_rate(port, SERIAL_BAUD_RATE_9600);
-
-  /* 8N1 */
-  serial_set_format(port, SERIAL_DATA_BITS_8 |
-                          SERIAL_PARITY_NONE |
-                          SERIAL_STOP_BIT_1);
-
-  outb(port + SERIAL_FIFO_REG, 0);     /* No FIFO */
-  outb(port + SERIAL_MODEM_REG, 0x3);  /* RTS + DSR */
-}
+#include <drivers/serial/serial.h>
 
 void early_init_serial(void) {
-  serial_init_port(SERIAL_COM1_PORT);
-  serial_init_port(SERIAL_COM2_PORT);
-  serial_init_port(SERIAL_COM3_PORT);
-  serial_init_port(SERIAL_COM4_PORT);
-}
-
-static inline u8 serial_data_ready(void) {
-  return inb(SERIAL_COM1_PORT + SERIAL_LSR_REG) & 1;
-}
-
-u8 serial_read(void) {
-  while (serial_data_ready() == 0);
-  return inb(SERIAL_COM1_PORT + SERIAL_DATA_REG);
-}
-
-static inline u8 serial_buffer_empty(void) {
-  return inb(SERIAL_COM1_PORT + SERIAL_LSR_REG) & 0x20;
-}
-
-void serial_write(u8 ch) {
-  while (serial_buffer_empty() == 0);
-  outb(SERIAL_COM1_PORT + SERIAL_DATA_REG, ch);
+  serial_init_port(COM1);
+  serial_init_port(COM2);
+  serial_init_port(COM3);
+  serial_init_port(COM4);
 }
 

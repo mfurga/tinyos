@@ -50,7 +50,6 @@ void parse_multiboot_info(u32 multiboot_magic,
 
 }
 
-
 void CDECL NORETURN kernel_main(u32 multiboot_magic,
                                 struct multiboot_info *multiboot_info) {
 

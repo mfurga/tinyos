@@ -5,6 +5,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define NORETURN    __attribute__((noreturn))
 #define NOINLINE    __attribute__((noinline))
