@@ -122,11 +122,9 @@ static void pci_probe_device(struct pci_dev *dev) {
   dev->class = pci_conf_read(dev, PCI_REG_CLASS);
   dev->subclass = pci_conf_read(dev, PCI_REG_SUBCLASS);
 
-/*
   printf("%02x:%02x.%d %04x:%04x class=%02x subclass=%02x \n",
     dev->bus, dev->dev, dev->func, dev->venid, dev->devid,
     dev->class, dev->subclass);
-*/
 
   pci_attach_driver(dev);
 

@@ -14,7 +14,7 @@ SECTIONS
 
   .text :
   {
-    *(.entry)
+    *(.text.start)
     *(.text)
   }
 

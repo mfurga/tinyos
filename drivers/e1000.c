@@ -262,8 +262,6 @@ int e1000_attach(struct pci_dev *dev) {
   mmio_base = (u32 *)dev->bar_addr[0];
   mmio_size = dev->bar_size[0];
 
-  printf("%08x\n", mmio_base[2]);
-
   e1000_interrupt_enable();
   e1000_rx_init();
 

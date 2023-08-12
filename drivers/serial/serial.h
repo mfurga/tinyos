@@ -4,6 +4,8 @@
 
 #define SERIAL_COM1_PORT         0x3f8
 #define SERIAL_COM2_PORT         0x2f8
+#define SERIAL_COM3_PORT         0x3e8
+#define SERIAL_COM4_PORT         0x2e8
 
 #define SERIAL_DLAB              0x80
 
@@ -35,6 +37,8 @@
 #define SERIAL_PARITY_EVEN       (3 << 3)
 #define SERIAL_PARITY_MARK       (5 << 3)
 #define SERIAL_PARITY_SPACE      (7 << 3)
+
+void early_init_serial(void);
 
 void serial_init(void);
 

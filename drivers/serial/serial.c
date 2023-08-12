@@ -1,4 +1,4 @@
-#include <drivers/serial.h>
+#include <drivers/serial/serial.h>
 #include <lib/x86.h>
 
 static inline void serial_set_baud_rate(u16 port, u16 baud_rate) {
@@ -13,24 +13,31 @@ static inline void serial_set_baud_rate(u16 port, u16 baud_rate) {
 }
 
 static inline void serial_set_format(u16 port, u8 flags) {
-  outb(port | SERIAL_LCR_REG, flags);
+  outb(port + SERIAL_LCR_REG, flags);
 }
 
-void serial_init(void) {
+static void serial_init_port(u16 port) {
 
   /* Disable interrupts */
-  outb(SERIAL_COM1_PORT + SERIAL_INTERRUPT_REG, 0);
+  outb(port + SERIAL_INTERRUPT_REG, 0);
 
   /* Baud rate 9600 */
-  serial_set_baud_rate(SERIAL_COM1_PORT, SERIAL_BAUD_RATE_9600);
+  serial_set_baud_rate(port, SERIAL_BAUD_RATE_9600);
 
   /* 8N1 */
-  serial_set_format(SERIAL_COM1_PORT, SERIAL_DATA_BITS_8 |
-                                      SERIAL_PARITY_NONE |
-                                      SERIAL_STOP_BIT_1);
+  serial_set_format(port, SERIAL_DATA_BITS_8 |
+                          SERIAL_PARITY_NONE |
+                          SERIAL_STOP_BIT_1);
 
-  outb(SERIAL_COM1_PORT + SERIAL_FIFO_REG, 0);     /* No FIFO */
-  outb(SERIAL_COM1_PORT + SERIAL_MODEM_REG, 0x3);  /* RTS + DSR */
+  outb(port + SERIAL_FIFO_REG, 0);     /* No FIFO */
+  outb(port + SERIAL_MODEM_REG, 0x3);  /* RTS + DSR */
+}
+
+void early_init_serial(void) {
+  serial_init_port(SERIAL_COM1_PORT);
+  serial_init_port(SERIAL_COM2_PORT);
+  serial_init_port(SERIAL_COM3_PORT);
+  serial_init_port(SERIAL_COM4_PORT);
 }
 
 static inline u8 serial_data_ready(void) {
@@ -50,5 +57,4 @@ void serial_write(u8 ch) {
   while (serial_buffer_empty() == 0);
   outb(SERIAL_COM1_PORT + SERIAL_DATA_REG, ch);
 }
-
 

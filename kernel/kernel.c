@@ -1,4 +1,4 @@
-#include <kernel/boot/boot_params.h>
+#include <kernel/boot/multiboot.h>
 #include <kernel/interrupt/idt.h>
 #include <kernel/memory/gdt.h>
 #include <kernel/memory/pmm.h>
@@ -8,7 +8,7 @@
 #include <lib/x86.h>
 
 #include <drivers/vga.h>
-#include <drivers/serial.h>
+#include <drivers/serial/serial.h>
 #include <drivers/keyboard.h>
 #include <drivers/rtc.h>
 #include <drivers/pci.h>
@@ -41,15 +41,36 @@ void switch_to_usermode(void (*entry_point)(void)) {
 
 }
 
-void CDECL NORETURN kernel_main(const boot_params_t *params) {
+void parse_multiboot_info(u32 multiboot_magic,
+                          struct multiboot_info *multiboot_info) {
 
-  /* Console init. */
-  serial_init();
-  vga_init(params->video.mode,
-           params->video.x,
-           params->video.y,
-           params->video.cols,
-           params->video.lines);
+  if (multiboot_magic != MULTIBOOT_BOOTLOADER_MAGIC) {
+    panic("Kernel requires the multiboot-compatible bootloader");
+  }
+
+}
+
+
+void CDECL NORETURN kernel_main(u32 multiboot_magic,
+                                struct multiboot_info *multiboot_info) {
+
+  early_init_serial();
+
+  parse_multiboot_info(multiboot_magic, multiboot_info);
+
+  vga_init(multiboot_info->vbe_mode,
+           0,
+           0,
+           80,
+           25);
+
+  printf("%p\n", multiboot_info->framebuffer_addr);
+  printf("w=%d h=%d\n", multiboot_info->framebuffer_width,
+                        multiboot_info->framebuffer_height);
+  char *cmdline = multiboot_info->cmdline;
+  printf("cmdline: %s\n", cmdline);
+
+#if 0
 
   printf("Kernel starting ...\n");
 
@@ -61,10 +82,23 @@ void CDECL NORETURN kernel_main(const boot_params_t *params) {
 
   pci_init();
 
+/*
   pmm_init(params->memory_map,
            params->memory_map_size);
 
   syscall_init();
+
+  keyboard_init();
+
+  rtc_datetime_t datetime = rtc_read_datetime();
+
+  printf("%d %d %d %d:%d:%d\n",
+    datetime.day,
+    datetime.month,
+    datetime.year,
+    datetime.hour,
+    datetime.minute,
+    datetime.second);
 
   u8 buf[2048];
   int r;
@@ -82,6 +116,7 @@ void CDECL NORETURN kernel_main(const boot_params_t *params) {
   switch_to_usermode(user_main);
   */
 
+#endif
   for (;;);
 }
 

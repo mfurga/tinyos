@@ -1,7 +1,7 @@
 #include <kernel/stdio.h>
 #include <lib/printf.h>
 
-#include <drivers/serial.h>
+#include <drivers/serial/serial.h>
 #include <drivers/vga.h>
 
 static void putc(int ch, int *cnt) {
