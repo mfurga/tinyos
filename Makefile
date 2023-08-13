@@ -1,7 +1,7 @@
 # Kernel makefile.
 
 VERBOSE := 0
-DEBUG := 1
+DEBUG := 0
 
 BUILD_DIR := build
 KIMAGE := $(BUILD_DIR)/kernel.elf
@@ -40,10 +40,13 @@ SRCS := $(shell find * -type f -name '*.[c|S]' -not -path 'bootloader/*')
 OBJS1 := $(SRCS:%.c=$(BUILD_DIR)/%.o)
 OBJS := $(OBJS1:%.S=$(BUILD_DIR)/%.o)
 
-all: $(BIMAGE) $(KIMAGE)
-	@cat $(BIMAGE) > $(OS_IMAGE)
-	@cat $(KIMAGE) >> $(OS_IMAGE)
-	@printf "\033[0;32mOS image created!\n\033[0m"
+# TODO: Remove me!
+all: $(KIMAGE)
+
+#all: $(BIMAGE) $(KIMAGE)
+#	@cat $(BIMAGE) > $(OS_IMAGE)
+#	@cat $(KIMAGE) >> $(OS_IMAGE)
+#	@printf "\033[0;32mOS image created!\n\033[0m"
 
 $(BIMAGE): $(KIMAGE)
 	@cd bootloader && cat ../$(BUILD_DIR)/KERNEL_SIZE | $(MAKE) KERNEL_SIZE=$$(xargs)
@@ -78,6 +81,6 @@ asm: all
 
 .PHONY: run
 run: all
-	./config/qemu.sh $(OS_IMAGE) $(DEBUG)
-	#bochs -f config/bochsrc -rc config/bochscmd
+	./tools/run_qemu.sh $(KIMAGE) $(DEBUG)
+	#bochs -f tools/bochsrc -rc tools/bochs_commands
 

@@ -11,9 +11,9 @@ if [ $2 -eq 1 ]; then
   QEMU_OPTS="${QEMU_OPTS} ${QEMU_DEBUG}"
 fi
 
-qemu-system-i386 $QEMU_OPTS $1 2>/dev/null
+qemu-system-i386 $QEMU_OPTS -kernel $1 2>/dev/null
 
 if [ $2 -eq 1 ]; then
-  gdb -q --command=config/gdb
+  gdb -q --command=tools/gdb_commands
 fi
 
