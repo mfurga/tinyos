@@ -1,5 +1,5 @@
 #include <kernel/panic.h>
-#include <kernel/stdio.h>
+#include <kernel/printk.h>
 #include <stdarg.h>
 
 void NORETURN _panic(const char *func,
@@ -10,12 +10,12 @@ void NORETURN _panic(const char *func,
   va_list ap;
   va_start(ap, fmt);
 
-  printf(
+  printk(
     "\n"
     "=== KERNEL PANIC ===\n"
     "Location : %s(), %s:%u\n\n", func, file, line);
-  vprintf(fmt, ap);
-  printf("\n\n");
+  vprintk(fmt, ap);
+  printk("\n\n");
 
   va_end(ap);
   for (;;);

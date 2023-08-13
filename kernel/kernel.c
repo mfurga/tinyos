@@ -3,7 +3,7 @@
 #include <kernel/memory/gdt.h>
 #include <kernel/memory/pmm.h>
 #include <kernel/syscall.h>
-#include <kernel/stdio.h>
+#include <kernel/printk.h>
 #include <kernel/panic.h>
 #include <lib/x86.h>
 
@@ -17,6 +17,9 @@
 #include <net/ethernet.h>
 
 extern void user_main(void);
+
+extern int __CTORS_START_PADDR;
+extern int __CTORS_END_PADDR;
 
 void switch_to_usermode(void (*entry_point)(void)) {
 
@@ -47,11 +50,23 @@ void parse_multiboot_info(u32 multiboot_magic,
   if (multiboot_magic != MULTIBOOT_BOOTLOADER_MAGIC) {
     panic("Kernel requires the multiboot-compatible bootloader");
   }
+}
 
+void call_kernel_ctors(void) {
+  void (*ctor)(void);
+
+  void **ctors_start = (void **)&__CTORS_START_PADDR;
+  void **ctors_end = (void **)&__CTORS_END_PADDR;
+
+  for (void **p = ctors_start; p < ctors_end; p++) {
+    *(void **)&ctor = *p;
+    ctor();
+  }
 }
 
 void CDECL NORETURN kernel_main(u32 multiboot_magic,
                                 struct multiboot_info *multiboot_info) {
+  call_kernel_ctors();
 
   early_init_serial();
 
@@ -63,15 +78,16 @@ void CDECL NORETURN kernel_main(u32 multiboot_magic,
            80,
            25);
 
-  printf("%p\n", multiboot_info->framebuffer_addr);
-  printf("w=%d h=%d\n", multiboot_info->framebuffer_width,
+  printk("%p\n", multiboot_info->framebuffer_addr);
+  printk("w=%d h=%d\n", multiboot_info->framebuffer_width,
                         multiboot_info->framebuffer_height);
   char *cmdline = multiboot_info->cmdline;
-  printf("cmdline: %s\n", cmdline);
+  printk("cmdline: %s\n", cmdline);
+  printk("kernel_main: %p\n", kernel_main);
 
 #if 0
 
-  printf("Kernel starting ...\n");
+  printk("Kernel starting ...\n");
 
   gdt_setup();
 

@@ -14,6 +14,7 @@
 
 .section .text.start
 .global _start
+_start:
   jmp multiboot_entry
 
 #define MUTIBOOT_FLAGS    (MULTIBOOT_PAGE_ALIGN |  \
@@ -48,9 +49,9 @@ multiboot_entry:
 
   /* Clear BSS section. */
   xor eax, eax
-  mov ecx, __BSS_END
-  sub ecx, __BSS_START
-  mov edi, __BSS_START
+  mov ecx, offset __BSS_END_PADDR
+  sub ecx, offset __BSS_START_PADDR
+  mov edi, offset __BSS_START_PADDR
   rep stosb
 
   /* Call C kernel_main function. */

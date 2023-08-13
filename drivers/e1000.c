@@ -1,5 +1,4 @@
 #include <drivers/e1000.h>
-#include <kernel/stdio.h>
 #include <kernel/assert.h>
 #include <lib/string.h>
 
@@ -269,7 +268,7 @@ int e1000_attach(struct pci_dev *dev) {
   u8 mac[6];
   read_mac(dev, mac);
 
-  printf("mac: %02x:%02x:%02x:%02x:%02x:%02x\n",
+  printk("mac: %02x:%02x:%02x:%02x:%02x:%02x\n",
     mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 */
 

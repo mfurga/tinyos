@@ -1,5 +1,5 @@
 #include <drivers/pci.h>
-#include <kernel/stdio.h>
+#include <kernel/printk.h>
 #include <lib/common.h>
 #include <lib/x86.h>
 
@@ -60,7 +60,7 @@ static void pci_attach_driver(struct pci_dev *dev) {
     if (dev->venid == driver->venid && dev->devid == driver->devid) {
       r = driver->attach(dev);
       if (r != 0) {
-        printf("Failed to attach driver to device %04x:%04x\n",
+        printk("Failed to attach driver to device %04x:%04x\n",
           dev->venid, dev->devid);
       }
     }
@@ -105,7 +105,7 @@ void pci_dev_enable(struct pci_dev *dev) {
     dev->bar_size[regnum] = size;
 
     /*
-    printf("%02x:%02x.%d (%04x:%04x) reg=%d base=0x%08x addr=0x%08x\n",
+    printk("%02x:%02x.%d (%04x:%04x) reg=%d base=0x%08x addr=0x%08x\n",
       dev->bus, dev->dev, dev->func, dev->venid, dev->devid, regnum, addr, size);
     */
   }
@@ -122,7 +122,7 @@ static void pci_probe_device(struct pci_dev *dev) {
   dev->class = pci_conf_read(dev, PCI_REG_CLASS);
   dev->subclass = pci_conf_read(dev, PCI_REG_SUBCLASS);
 
-  printf("%02x:%02x.%d %04x:%04x class=%02x subclass=%02x \n",
+  printk("%02x:%02x.%d %04x:%04x class=%02x subclass=%02x \n",
     dev->bus, dev->dev, dev->func, dev->venid, dev->devid,
     dev->class, dev->subclass);
 

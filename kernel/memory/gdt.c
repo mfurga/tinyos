@@ -1,5 +1,4 @@
 #include <kernel/memory/gdt.h>
-#include <kernel/stdio.h>
 #include <lib/string.h>
 
 #define GDT_TYPE_CODE_RE     0x1a  /* code or data, 10 */

@@ -1,6 +1,5 @@
 #include <kernel/interrupt/handler.h>
 #include <kernel/interrupt/idt.h>
-#include <kernel/stdio.h>
 #include <lib/common.h>
 #include <lib/x86.h>
 
@@ -35,7 +34,6 @@ static void keyboard_handler(int_context_t *context) {
   }
 
   char c = kbdus[scancode];
-  printf("%c", c);
   UNUSED(c);
 }
 

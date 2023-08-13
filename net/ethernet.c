@@ -1,5 +1,5 @@
 #include <net/ethernet.h>
-#include <kernel/stdio.h>
+#include <kernel/printk.h>
 
 static const char *eth_type(u16 type) {
   switch (type) {
@@ -17,7 +17,7 @@ static const char *eth_type(u16 type) {
 void ethernet_parse(unsigned char *data, size_t size) {
   u16 type = (data[12] << 8) | data[13];
 
-  printf(
+  printk(
     "Ethernet frame:\n"
     " desc: %02x:%02x:%02x:%02x:%02x:%02x\n"
     " src : %02x:%02x:%02x:%02x:%02x:%02x\n"
@@ -31,12 +31,12 @@ void ethernet_parse(unsigned char *data, size_t size) {
   for (size_t i = 14; i < size; i++) {
     size_t j = i - 14;
     if (j > 0 && j % 16 == 0) {
-      printf("\n       ");
+      printk("\n       ");
     }
 
-    printf("%02x ", data[i]);
+    printk("%02x ", data[i]);
   }
 
-  printf("\n\n");
+  printk("\n\n");
 }
 

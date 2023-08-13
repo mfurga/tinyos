@@ -1,6 +1,6 @@
 #include <kernel/interrupt/handler.h>
 #include <kernel/interrupt/idt.h>
-#include <kernel/stdio.h>
+#include <kernel/printk.h>
 
 typedef void (*syscall_handler_t)(int_context_t *);
 
@@ -27,7 +27,7 @@ void syscall_init(void) {
 }
 
 static void syscall_print(int_context_t *context) {
-  printf((char *)context->ebx);
+  printk((char *)context->ebx);
   return;
 }
 
