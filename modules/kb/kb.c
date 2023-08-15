@@ -1,6 +1,4 @@
-#include <tinyos/common/common.h>
-#include <tinyos/kernel/hal.h>
-#include <tinyos/kernel/irq.h>
+#include <tinyos/kernel/module.h>
 
 #define SC_MAX 57
 
@@ -36,7 +34,16 @@
 //   UNUSED(c);
 // }
 
-void keyboard_init(void) {
-  irq_hander_register(1, NULL);
+void kb_init(void) {
+  // irq_hander_register(1, NULL);
+
+  for (;;);
 }
 
+static const struct module module_info = {
+  .name = "kb",
+  .priority = 0,
+  .init = &kb_init
+};
+
+REGISTER_MODULE(&module_info);

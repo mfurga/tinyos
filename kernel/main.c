@@ -1,6 +1,7 @@
 #include <tinyos/kernel/hal.h>
 #include <tinyos/kernel/irq.h>
 #include <tinyos/kernel/printk.h>
+#include <tinyos/kernel/module.h>
 #include <tinyos/kernel/panic.h>
 
 #include <tinyos/drivers/serial.h>
@@ -41,7 +42,7 @@ void CDECL NORETURN kernel_main(u32 magic,
   init_cpu_exception_handling();
   init_irq_handling();
 
-  // init_segmentation();
+  // init_modules();
 
   for (;;);
 }

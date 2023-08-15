@@ -15,11 +15,18 @@
 #define WAEK __attribute__((weak))
 #define ALIGNED(x) __attribute__((aligned(x)))
 #define CDECL __attribute__((__cdecl__))
+#define CONSTRUCTOR __attribute__((constructor))
 
 #define UNUSED(x)  ((void)x)
 #define STR(s)     STR_(s)
 #define STR_(s)    #s
 
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+
+#define ASSERT(x) do { /* nothing */ } while (0)
+#define STATIC_ASSERT(x) _Static_assert(x, "Static assertion failed")
+
+#define asm(x) __asm__(x)
 #define asm_volatile(x) __asm__ __volatile__(x)
 
 typedef uint8_t u8;
