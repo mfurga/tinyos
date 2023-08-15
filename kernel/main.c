@@ -4,7 +4,7 @@
 #include <tinyos/kernel/module.h>
 #include <tinyos/kernel/panic.h>
 
-#include <tinyos/drivers/serial.h>
+#include <tinyos/modules/serial.h>
 
 #include <multiboot.h>
 

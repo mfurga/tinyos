@@ -2,8 +2,8 @@
 #include <tinyos/kernel/printk.h>
 #include <tinyos/kernel/hal.h>
 
-#include <tinyos/drivers/serial.h>
-#include <tinyos/drivers/vga.h>
+#include <tinyos/modules/serial.h>
+#include <tinyos/modules/vga.h>
 
 static void putc(int ch, int *cnt) {
   vga_putc(ch);

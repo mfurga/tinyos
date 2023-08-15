@@ -15,4 +15,3 @@
 u8 cmos_read(u8 reg);
 
 void cmos_write(u8 reg, u8 data);
-

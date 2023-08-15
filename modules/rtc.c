@@ -1,5 +1,13 @@
-#include <tinyos/drivers/rtc.h>
-#include <tinyos/drivers/cmos.h>
+#include <tinyos/modules/cmos.h>
+
+typedef struct {
+  u8 second;
+  u8 minute;
+  u8 hour;
+  u8 day;
+  u8 month;
+  u8 year;
+} rtc_datetime_t;
 
 #define RTC_DATETIME_CMP(a, b)                                \
   ((a).second != (b).second) || ((a).minute != (b).minute) || \

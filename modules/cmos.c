@@ -1,5 +1,5 @@
-#include <tinyos/drivers/cmos.h>
 #include <tinyos/kernel/hal.h>
+#include <tinyos/modules/cmos.h>
 
 #define CMOS_ADDRESS_PORT 0x70
 #define CMOS_DATA_PORT    0x71

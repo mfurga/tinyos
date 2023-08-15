@@ -1,10 +1,8 @@
-#include <tinyos/drivers/pci.h>
-#include <tinyos/kernel/printk.h>
 #include <tinyos/common/common.h>
+#include <tinyos/kernel/printk.h>
 #include <tinyos/kernel/hal.h>
 
-/* Drivers */
-#include <tinyos/drivers/e1000.h>
+#include <tinyos/modules/pci.h>
 
 struct pci_driver {
   u16 venid;

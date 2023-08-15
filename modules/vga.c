@@ -2,7 +2,7 @@
 #include <tinyos/common/string.h>
 #include <tinyos/kernel/hal.h>
 
-#include <tinyos/drivers/vga.h>
+#include <tinyos/modules/vga.h>
 
 #define VRAM_BASE_ADDR 0xb8000
 
