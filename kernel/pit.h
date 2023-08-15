@@ -1,6 +1,6 @@
-#pragma once
+// #pragma once
 
-#include <lib/common.h>
+// #include <lib/common.h>
 
-void pit_init(u32 freq);
+// void pit_init(u32 freq);
 

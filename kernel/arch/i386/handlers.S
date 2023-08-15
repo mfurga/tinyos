@@ -1,4 +1,3 @@
-
 .intel_syntax noprefix
 
 #define ASM_FILE
@@ -6,7 +5,6 @@
 #include <tinyos/arch/i386/utils.h>
 
 .section .text
-.global exception_entry_points
 
 .macro exception no
 exception_\no:
@@ -19,6 +17,13 @@ exception_\no:
 exception_\no:
   push \no
   jmp exception_common_stub
+.endm
+
+.macro irq no
+irq_\no:
+  push 0
+  push 32 + \no
+  jmp irq_common_stub
 .endm
 
 /* Exception entry points */
@@ -55,6 +60,23 @@ exception X86_EXP_29  /* reserved */
 exception X86_EXP_30  /* reserved */
 exception X86_EXP_31  /* reserved */
 
+/* IRQ entry points */
+irq 0
+irq 1
+irq 2
+irq 3
+irq 4
+irq 5
+irq 6
+irq 7
+irq 8
+irq 9
+irq 10
+irq 11
+irq 12
+irq 13
+irq 14
+irq 15
 
 exception_common_stub:
   pushad
@@ -85,6 +107,39 @@ exception_common_stub:
   add esp, 8
   iret
 
+irq_common_stub:
+  pushad
+
+  mov ax, ds
+  push eax
+
+  mov ax, X86_KERNEL_DATA_SEL
+  mov ds, ax
+  mov es, ax
+  mov fs, ax
+  mov gs, ax
+
+  /* XXX: Pass the int_context_t structure as a pointer to the exception_entry
+    function. If you pass int_context_t directly, GCC will optymalize the
+    exception_entry using the input structure as stack memory. */
+  push esp
+  call irq_entry
+  add esp, 4
+
+  pop eax
+  mov ds, ax
+  mov es, ax
+  mov fs, ax
+  mov gs, ax
+
+  popad
+  add esp, 8
+  iret
+
+
+.section .rodata
+.global exception_entry_points
+.global irq_entry_points
 
 .altmacro
 
@@ -92,7 +147,9 @@ exception_common_stub:
   .long exception_\no
 .endm
 
-.section .data
+.macro irq_addr no
+  .long irq_\no
+.endm
 
 exception_entry_points:
 .set i, 0
@@ -100,3 +157,11 @@ exception_entry_points:
   exception_addr %i
   .set i, i + 1
 .endr
+
+irq_entry_points:
+.set i, 0
+.rept 16
+  irq_addr %i
+  .set i, i + 1
+.endr
+

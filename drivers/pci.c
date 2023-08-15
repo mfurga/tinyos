@@ -13,8 +13,8 @@ struct pci_driver {
 };
 
 static struct pci_driver pci_driver_table[] = {
-  { .venid = 0x8086, .devid = 0x10ea, .attach = &e1000_attach },
-  { .venid = 0x8086, .devid = 0x100e, .attach = &e1000_attach },
+  // { .venid = 0x8086, .devid = 0x10ea, .attach = &e1000_attach },
+  // { .venid = 0x8086, .devid = 0x100e, .attach = &e1000_attach },
   { 0, 0, NULL }
 };
 

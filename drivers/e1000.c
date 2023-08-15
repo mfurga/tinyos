@@ -1,3 +1,5 @@
+#if 0
+
 #include <tinyos/drivers/e1000.h>
 #include <tinyos/common/string.h>
 #include <tinyos/kernel/assert.h>
@@ -275,3 +277,4 @@ int e1000_attach(struct pci_dev *dev) {
   return 0;
 }
 
+#endif

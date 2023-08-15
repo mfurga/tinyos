@@ -1,22 +1,11 @@
 #include <tinyos/common/common.h>
-#include <tinyos/arch/x86/utils.h>
+#include <tinyos/kernel/hal.h>
 
 #include "idt.h"
-#include "gdt.h"
 
 extern void (*exception_entry_points[32])(void);
 
 static idt_entry_32_t idt[256] ALIGNED(16);
-
-static void idt_entry_set(u8 no, u16 segment, u32 offset, u8 type, u8 dpl) {
-  idt[no].offset_0_15 = offset & 0xffff;
-  idt[no].offset_16_31 = offset >> 16;
-  idt[no].segment = segment;
-  idt[no].type = type & 0b11111;
-  idt[no].dpl = dpl & 0b11;
-  idt[no].present = 1;
-  idt[no]._zero = 0;
-}
 
 static void load_idt(void) {
   struct {
@@ -26,32 +15,38 @@ static void load_idt(void) {
 
   asm_volatile("lidt [%0]"
                : /* no output */
-               : "q" (&idtr)
-               : "memory");
+               : "m" (idtr)
+               : /* no clobber */);
+}
+
+void idt_entry_set(u8 no, u16 segment, u32 offset, u8 type, u8 dpl) {
+  idt[no].offset_0_15 = offset & 0xffff;
+  idt[no].offset_16_31 = offset >> 16;
+  idt[no].segment = segment;
+  idt[no].type = type & 0b11111;
+  idt[no].dpl = dpl & 0b11;
+  idt[no].present = 1;
+  idt[no]._zero = 0;
 }
 
 void init_cpu_exception_handling(void) {
   /* Set the entries for the x86 exceptions. */
   for (u8 i = 0; i < 32; i++) {
     idt_entry_set(i,
-                  GDT_SEL_KERNEL_CODE | GDT_SEL_RPL_0,
-                  exception_entry_points[i],
+                  X86_KERNEL_CODE_SEL,
+                  (u32)exception_entry_points[i],
                   IDT_GATE_INT32,
                   DPL_RING_0);
   }
 
   /* Allow `int3` to work from userspace. */
   idt_entry_set(X86_EXP_BP,
-                GDT_SEL_KERNEL_CODE | GDT_SEL_RPL_0,
-                exception_entry_points[X86_EXP_BP],
+                X86_KERNEL_CODE_SEL,
+                (u32)exception_entry_points[X86_EXP_BP],
                 IDT_GATE_INT32,
                 DPL_RING_3);
 
   load_idt();
-}
-
-void irq_hander_register(u8 no, void *) {
-
 }
 
 

@@ -44,6 +44,8 @@ typedef struct idt_entry_32 {
   u16 offset_16_31;
 } PACKED idt_entry_32_t;
 
-void idt_setup(void);
-void pic_remap(u8 master_offset, u8 slave_offset);
+
+void idt_entry_set(u8 no, u16 segment, u32 offset, u8 type, u8 dpl);
+
+
 
