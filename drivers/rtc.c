@@ -1,5 +1,5 @@
-#include <drivers/rtc.h>
-#include <drivers/cmos.h>
+#include <tinyos/drivers/rtc.h>
+#include <tinyos/drivers/cmos.h>
 
 #define RTC_DATETIME_CMP(a, b)                                \
   ((a).second != (b).second) || ((a).minute != (b).minute) || \

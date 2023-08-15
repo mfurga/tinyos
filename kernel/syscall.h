@@ -1,4 +1,4 @@
-#pragma once
+// #pragma once
 
-void syscall_init(void);
+// void syscall_init(void);
 

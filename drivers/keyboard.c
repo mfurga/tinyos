@@ -1,7 +1,6 @@
-#include <kernel/interrupt/handler.h>
-#include <kernel/interrupt/idt.h>
-#include <lib/common.h>
-#include <lib/x86.h>
+#include <tinyos/common/common.h>
+#include <tinyos/kernel/hal.h>
+#include <tinyos/kernel/irq.h>
 
 #define SC_MAX 57
 
@@ -19,25 +18,25 @@ static const char kbdus[] = {
   ' '
 };
 
-static void keyboard_handler(int_context_t *context) {
-  UNUSED(context);
+// static void keyboard_handler(int_context_t *context) {
+//   UNUSED(context);
 
-  u8 scancode = inb(0x60);
+//   u8 scancode = inb(0x60);
 
-  if (scancode & 0x80) {
-    /* Key release */
-    return;
-  }
+//   if (scancode & 0x80) {
+//     /* Key release */
+//     return;
+//   }
 
-  if (scancode > SC_MAX) {
-    return;
-  }
+//   if (scancode > SC_MAX) {
+//     return;
+//   }
 
-  char c = kbdus[scancode];
-  UNUSED(c);
-}
+//   char c = kbdus[scancode];
+//   UNUSED(c);
+// }
 
 void keyboard_init(void) {
-  int_handler_register(IRQ1, &keyboard_handler);
+  irq_hander_register(1, NULL);
 }
 

@@ -1,10 +1,10 @@
-#include <drivers/cmos.h>
-#include <lib/x86.h>
+#include <tinyos/drivers/cmos.h>
+#include <tinyos/kernel/hal.h>
 
 #define CMOS_ADDRESS_PORT 0x70
 #define CMOS_DATA_PORT    0x71
 
-extern u8 nmi_disabled;
+u8 nmi_disabled = 1;
 
 u8 cmos_read(u8 reg) {
   reg &= 0x7f;

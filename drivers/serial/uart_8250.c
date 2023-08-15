@@ -3,8 +3,8 @@
   https://en.wikibooks.org/wiki/Serial_Programming/8250_UART_Programming
 */
 
-#include <lib/common.h>
-#include <lib/x86.h>
+#include <tinyos/common/common.h>
+#include <tinyos/kernel/hal.h>
 
 #define THR     0  /* [ W] Transmitter Holding Buffer */
 #define RBR     0  /* [R ] Receiver Buffer */

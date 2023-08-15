@@ -1,6 +1,5 @@
-#include <kernel/panic.h>
-#include <kernel/printk.h>
-#include <stdarg.h>
+#include <tinyos/kernel/panic.h>
+#include <tinyos/kernel/printk.h>
 
 void NORETURN _panic(const char *func,
                      const char *file,

@@ -1,6 +1,6 @@
-#include <drivers/e1000.h>
-#include <kernel/assert.h>
-#include <lib/string.h>
+#include <tinyos/drivers/e1000.h>
+#include <tinyos/common/string.h>
+#include <tinyos/kernel/assert.h>
 
 /* Receive Address Low */
 #define RAL_OFFSET (0x05400 / 4)

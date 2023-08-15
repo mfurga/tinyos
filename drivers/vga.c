@@ -1,8 +1,8 @@
-#include <lib/common.h>
-#include <lib/x86.h>
-#include <lib/string.h>
+#include <tinyos/common/common.h>
+#include <tinyos/common/string.h>
+#include <tinyos/kernel/hal.h>
 
-#include <drivers/vga.h>
+#include <tinyos/drivers/vga.h>
 
 #define VRAM_BASE_ADDR 0xb8000
 

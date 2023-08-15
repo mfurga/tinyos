@@ -1,7 +1,5 @@
-#include <kernel/interrupt/handler.h>
-#include <kernel/interrupt/idt.h>
-#include <kernel/pit.h>
-#include <lib/x86.h>
+#include <tinyos/kernel/irq.h>
+#include <tinyos/kernel/hal.h>
 
 #define PIT_CHANNEL_0_PORT 0x40
 #define PIT_CHANNEL_1_PORT 0x41
@@ -29,25 +27,25 @@
 
 static u32 counter;
 
-static void pit_handler(int_context_t *context) {
-  UNUSED(context);
-  counter++;
-}
+// static void pit_handler(int_context_t *context) {
+//   UNUSED(context);
+//   counter++;
+// }
 
-void pit_init(u32 freq) {
-  int_handler_register(IRQ0, &pit_handler);
+// void pit_init(u32 freq) {
+//   int_handler_register(IRQ0, &pit_handler);
 
-  u32 divisor = 1193180 / freq;
+//   u32 divisor = 1193180 / freq;
 
-  outb(PIT_COMMAND_PORT, PIT_BINMODE |
-                         PIT_OPMODE_3 |
-                         PIT_ACCMODE_LOHI |
-                         PIT_CHANNEL_0);
+//   outb(PIT_COMMAND_PORT, PIT_BINMODE |
+//                          PIT_OPMODE_3 |
+//                          PIT_ACCMODE_LOHI |
+//                          PIT_CHANNEL_0);
 
-  u8 lo = (u8)(divisor & 0xff);
-  u8 hi = (u8)((divisor >> 8) & 0xff);
+//   u8 lo = (u8)(divisor & 0xff);
+//   u8 hi = (u8)((divisor >> 8) & 0xff);
 
-  outb(PIT_CHANNEL_0_PORT, lo);
-  outb(PIT_CHANNEL_0_PORT, hi);
-}
+//   outb(PIT_CHANNEL_0_PORT, lo);
+//   outb(PIT_CHANNEL_0_PORT, hi);
+// }
 

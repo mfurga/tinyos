@@ -1,8 +1,9 @@
-#include <lib/printf.h>
-#include <kernel/printk.h>
+#include <tinyos/common/printf.h>
+#include <tinyos/kernel/printk.h>
+#include <tinyos/kernel/hal.h>
 
-#include <drivers/serial/serial.h>
-#include <drivers/vga.h>
+#include <tinyos/drivers/serial.h>
+#include <tinyos/drivers/vga.h>
 
 static void putc(int ch, int *cnt) {
   vga_putc(ch);
