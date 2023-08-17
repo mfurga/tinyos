@@ -11,7 +11,7 @@ void init_irq_handling(void) {
   for (u8 i = 0; i < 16; i++) {
     idt_entry_set(32 + i,
                   X86_KERNEL_CODE_SEL,
-                  (u32)irq_entry_points[i],
+                  irq_entry_points[i],
                   IDT_GATE_INT32,
                   DPL_RING_0);
   }

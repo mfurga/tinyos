@@ -31,7 +31,6 @@
 #define DPL_RING_0        0
 #define DPL_RING_3        3
 
-
 #define SYSCALL_VECTOR    0x80
 
 typedef struct idt_entry_32 {
@@ -44,8 +43,4 @@ typedef struct idt_entry_32 {
   u16 offset_16_31;
 } PACKED idt_entry_32_t;
 
-
-void idt_entry_set(u8 no, u16 segment, u32 offset, u8 type, u8 dpl);
-
-
-
+void idt_entry_set(u8 no, u16 segment, void *offset, u8 type, u8 dpl);

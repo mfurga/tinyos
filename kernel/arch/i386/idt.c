@@ -13,15 +13,15 @@ static void load_idt(void) {
     u32 address;
   } PACKED idtr = { .limit = sizeof(idt) - 1, .address = (u32)&idt };
 
-  asm_volatile("lidt [%0]"
+  asm_volatile("lidt %0"
                : /* no output */
                : "m" (idtr)
                : /* no clobber */);
 }
 
-void idt_entry_set(u8 no, u16 segment, u32 offset, u8 type, u8 dpl) {
-  idt[no].offset_0_15 = offset & 0xffff;
-  idt[no].offset_16_31 = offset >> 16;
+void idt_entry_set(u8 no, u16 segment, void *offset, u8 type, u8 dpl) {
+  idt[no].offset_0_15 = (u32)offset & 0xffff;
+  idt[no].offset_16_31 = (u32)offset >> 16;
   idt[no].segment = segment;
   idt[no].type = type & 0b11111;
   idt[no].dpl = dpl & 0b11;
@@ -34,7 +34,7 @@ void init_cpu_exception_handling(void) {
   for (u8 i = 0; i < 32; i++) {
     idt_entry_set(i,
                   X86_KERNEL_CODE_SEL,
-                  (u32)exception_entry_points[i],
+                  exception_entry_points[i],
                   IDT_GATE_INT32,
                   DPL_RING_0);
   }
@@ -42,7 +42,7 @@ void init_cpu_exception_handling(void) {
   /* Allow `int3` to work from userspace. */
   idt_entry_set(X86_EXP_BP,
                 X86_KERNEL_CODE_SEL,
-                (u32)exception_entry_points[X86_EXP_BP],
+                exception_entry_points[X86_EXP_BP],
                 IDT_GATE_INT32,
                 DPL_RING_3);
 

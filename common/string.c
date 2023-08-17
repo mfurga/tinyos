@@ -7,23 +7,26 @@ size_t strlen(const char *s) {
   return l;
 }
 
-void *memset(u8 *s, u8 v, size_t n) {
+void *memset(void *s, u8 v, size_t n) {
+  u8 *p = s;
   for (size_t i = 0; i < n; i++) {
-    *s++ = v;
+    *p++ = v;
   }
   return s;
 }
 
-void *memset16(u16 *s, u16 v, size_t n) {
+void *memset16(void *s, u16 v, size_t n) {
+  u16 *p = s;
   for (size_t i = 0; i < n; i++) {
-    *s++ = v;
+    *p++ = v;
   }
   return s;
 }
 
-void *memset32(u32 *s, u32 v, size_t n) {
+void *memset32(void *s, u32 v, size_t n) {
+  u32 *p = s;
   for (size_t i = 0; i < n; i++) {
-    *s++ = v;
+    *p++ = v;
   }
   return s;
 }

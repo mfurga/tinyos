@@ -1,24 +1,23 @@
 #pragma once
 
-#define GDT_ENTRY_NULL          0
-#define GDT_ENTRY_KERNEL_CODE   1
-#define GDT_ENTRY_KERNEL_DATA   2
-#define GDT_ENTRY_USER_CODE     3
-#define GDT_ENTRY_USER_DATA     4
-#define GDT_ENTRY_TSS           5
-
-#define GDT_SEL_RPL_0           0
-#define GDT_SEL_RPL_3           3
-
-#define GDT_SEL_KERNEL_CODE     ((GDT_ENTRY_KERNEL_CODE) << 3)
-#define GDT_SEL_KERNEL_DATA     ((GDT_ENTRY_KERNEL_DATA) << 3)
-#define GDT_SEL_USER_CODE       ((GDT_ENTRY_USER_CODE) << 3)
-#define GDT_SEL_USER_DATA       ((GDT_ENTRY_USER_DATA) << 3)
-#define GDT_SEL_TSS             ((GDT_ENTRY_TSS) << 3)
-
-#ifndef ASM_FILE
-
 #include <tinyos/common/common.h>
+
+#define GDT_TYPE_CODE_RE     0x1a  /* code or data, 10 */
+#define GDT_TYPE_DATA_RW     0x12  /* code or data, 2 */
+#define GDT_TYPE_TSS_32_AVL  0x09  /* system, 9 */
+#define GDT_TYPE_TSS_32_BUSY 0x0b  /* system, 11 */
+
+#define GDT_DPL_RING_0       (0 << 5)
+#define GDT_DPL_RING_1       (1 << 5)
+#define GDT_DPL_RING_2       (2 << 5)
+#define GDT_DPL_RING_3       (3 << 5)
+
+#define GDT_PRESENT          (1 << 7)
+#define GDT_AVL              (1 << 8)
+#define GDT_LONG             (1 << 9)
+#define GDT_OP_SIZE_16       (0 << 10)
+#define GDT_OP_SIZE_32       (1 << 10)
+#define GDT_GRANULARITY      (1 << 11)
 
 typedef struct {
   u16 limit_0_15;
@@ -29,11 +28,6 @@ typedef struct {
   u8 flags_8_11 : 4;
   u8 base_24_31;
 } PACKED gdt_entry_t;
-
-typedef struct {
-  u16 limit;
-  u32 address;
-} PACKED gdtr_t;
 
 typedef struct {
   u32 prev_tss;
@@ -64,6 +58,3 @@ typedef struct {
   u16 trap;
   u16 iomap_base;
 } PACKED tss_t;
-
-
-#endif

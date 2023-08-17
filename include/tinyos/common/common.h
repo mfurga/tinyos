@@ -27,7 +27,7 @@
 #define STATIC_ASSERT(x) _Static_assert(x, "Static assertion failed")
 
 #define asm(x) __asm__(x)
-#define asm_volatile(x) __asm__ __volatile__(x)
+#define asm_volatile(...) __asm__ __volatile__(__VA_ARGS__)
 
 typedef uint8_t u8;
 typedef uint16_t u16;
