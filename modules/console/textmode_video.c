@@ -87,6 +87,7 @@ void textmode_init(u8 x, u8 y) {
   context.x = x;
   context.y = y;
   context.color = FG_GRAY | BG_BLACK;
+  text_mode_move_cursor();
 }
 
 void textmode_putc(u8 ch) {

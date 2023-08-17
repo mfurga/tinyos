@@ -1,7 +1,7 @@
 # Kernel makefile.
 
 VERBOSE := 0
-DEBUG := 0
+DEBUG := 1
 
 BUILD_DIR := build
 KIMAGE := $(BUILD_DIR)/kernel.elf
@@ -30,8 +30,8 @@ STRIP := $(CROSS_COMPILE)-strip
 OBJCOPY := $(CROSS_COMPILE)-objcopy
 OBJDUMP := $(CROSS_COMPILE)-objdump
 
-ASFLAGS := $(D) -I. -c
-CFLAGS := $(D) -Wall -Wextra -std=c11 -O2 -I. -ffreestanding -masm=intel
+ASFLAGS := $(D) -Iinclude -Iinclude/3rd_party -c
+CFLAGS := $(D) -Wall -Wextra -std=c11 -O2 -Iinclude -Iinclude/3rd_party -ffreestanding -masm=intel
 
 LDFLASGS := -lgcc -static -nostdlib -Tlinker.ld
 
@@ -40,13 +40,10 @@ SRCS := $(shell find * -type f -name '*.[c|S]' -not -path 'bootloader/*')
 OBJS1 := $(SRCS:%.c=$(BUILD_DIR)/%.o)
 OBJS := $(OBJS1:%.S=$(BUILD_DIR)/%.o)
 
-# TODO: Remove me!
-all: $(KIMAGE)
-
-#all: $(BIMAGE) $(KIMAGE)
-#	@cat $(BIMAGE) > $(OS_IMAGE)
-#	@cat $(KIMAGE) >> $(OS_IMAGE)
-#	@printf "\033[0;32mOS image created!\n\033[0m"
+all: $(BIMAGE) $(KIMAGE)
+	@cat $(BIMAGE) > $(OS_IMAGE)
+	@cat $(KIMAGE) >> $(OS_IMAGE)
+	@printf "\033[0;32mOS image created!\n\033[0m"
 
 $(BIMAGE): $(KIMAGE)
 	@cd bootloader && cat ../$(BUILD_DIR)/KERNEL_SIZE | $(MAKE) KERNEL_SIZE=$$(xargs)
@@ -81,6 +78,6 @@ asm: all
 
 .PHONY: run
 run: all
-	./tools/run_qemu.sh $(KIMAGE) $(DEBUG)
-	#bochs -f tools/bochsrc -rc tools/bochs_commands
+	#./tools/run_qemu.sh $(KIMAGE) $(DEBUG)
+	bochs -f tools/bochsrc -rc tools/bochs_commands
 

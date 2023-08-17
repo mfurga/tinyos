@@ -7,12 +7,48 @@
 
 #include <multiboot.h>
 
+void dump_memory_map(multiboot_memory_map_t *mmap, u32 mmap_length) {
+  assert(mmap_length % sizeof(multiboot_memory_map_t) == 0);
+
+  printk("\n");
+  printk("System memory map provided by the bootloader:\n");
+  printk("\n");
+  printk("NO  START                END                TYPE\n");
+  printk("------------------------------------------------\n");
+
+  for (size_t i = 0; i < mmap_length / sizeof(multiboot_memory_map_t); i++) {
+    printk("%02d: 0x%016llx - 0x%016llx %02d\n",
+      i, mmap[i].addr, mmap[i].addr + mmap[i].len - 1, mmap[i].type);
+  }
+}
+
 void parse_multiboot_info(u32 magic,
                           struct multiboot_info *info) {
-  UNUSED(info);
+  printk("Paring multiboot info structure ...\n");
+
   if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
     panic("Kernel requires the multiboot-compatible bootloader");
   }
+
+  if (!(info->flags & MULTIBOOT_INFO_MEMORY)) {
+    panic("No basic memory information provided by the bootloader");
+  }
+
+  if (!(info->flags & MULTIBOOT_INFO_MEM_MAP)) {
+    panic("No memory map provided by the bootloader");
+  }
+
+  if (info->flags & MULTIBOOT_INFO_BOOT_LOADER_NAME) {
+    const char *name = (const char *)info->boot_loader_name;
+    printk("Bootloader detected: %s\n", name);
+  }
+
+  if (info->flags & MULTIBOOT_INFO_CMDLINE) {
+    const char *cmdline = (const char *)info->cmdline;
+    printk("Cmdline: %s\n", cmdline);
+  }
+
+  dump_memory_map((multiboot_memory_map_t *)info->mmap_addr, info->mmap_length);
 }
 
 void call_kernel_ctors(void) {
@@ -33,9 +69,6 @@ void call_kernel_ctors(void) {
 
 NORETURN CDECL void kernel_main(u32 magic,
                                 struct multiboot_info *info) {
-  UNUSED(magic);
-  UNUSED(info);
-
   call_kernel_ctors();
   early_init_terminals();
 

@@ -2,7 +2,7 @@
 #include <tinyos/kernel/panic.h>
 
 static const struct terminal *terminals[8];
-static unsigned terminal_idx;
+static size_t terminal_idx;
 
 void register_terminal(const struct terminal *term) {
   assert(terminal_idx < ARRAY_SIZE(terminals));
@@ -10,7 +10,7 @@ void register_terminal(const struct terminal *term) {
 }
 
 void early_init_terminals(void) {
-  for (unsigned i = 0; i < terminal_idx; i++) {
+  for (size_t i = 0; i < terminal_idx; i++) {
     const struct terminal *t = terminals[i];
     t->init();
   }
@@ -18,8 +18,7 @@ void early_init_terminals(void) {
 
 void terminal_write(const char *buf, size_t size) {
   /* Write to all available terminals */
-
-  for (unsigned i = 0; i < terminal_idx; i++) {
+  for (size_t i = 0; i < terminal_idx; i++) {
     const struct terminal *t = terminals[i];
     t->write(buf, size);
   }
