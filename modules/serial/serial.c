@@ -1,5 +1,6 @@
-#include <tinyos/modules/serial.h>
 #include <tinyos/kernel/hal.h>
+
+#include "serial.h"
 
 void early_init_serial(void) {
   serial_init_port(COM1);

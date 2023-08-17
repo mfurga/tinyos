@@ -40,10 +40,10 @@ void kb_init(void) {
   for (;;);
 }
 
-static const struct module module_info = {
+static const struct module kb_module = {
   .name = "kb",
   .priority = 0,
   .init = &kb_init
 };
 
-REGISTER_MODULE(&module_info);
+REGISTER_MODULE(&kb_module);

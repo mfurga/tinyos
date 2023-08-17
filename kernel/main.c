@@ -3,8 +3,7 @@
 #include <tinyos/kernel/printk.h>
 #include <tinyos/kernel/module.h>
 #include <tinyos/kernel/panic.h>
-
-#include <tinyos/modules/serial.h>
+#include <tinyos/kernel/terminal.h>
 
 #include <multiboot.h>
 
@@ -31,13 +30,13 @@ void call_kernel_ctors(void) {
   }
 }
 
-void CDECL NORETURN kernel_main(u32 magic,
+NORETURN CDECL void kernel_main(u32 magic,
                                 struct multiboot_info *info) {
   UNUSED(magic);
   UNUSED(info);
 
   call_kernel_ctors();
-  early_init_serial();
+  early_init_terminals();
 
   init_cpu_exception_handling();
   init_irq_handling();

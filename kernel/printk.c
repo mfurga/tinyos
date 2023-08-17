@@ -2,19 +2,16 @@
 #include <tinyos/kernel/printk.h>
 #include <tinyos/kernel/hal.h>
 
-#include <tinyos/modules/serial.h>
-#include <tinyos/modules/vga.h>
+#include <tinyos/kernel/terminal.h>
 
-static void putc(int ch, int *cnt) {
-  vga_putc(ch);
-  serial_write(COM1, ch);
-  (*cnt)++;
+static void printk_flush_no_tty(const char *buf, size_t len) {
+  terminal_write(buf, len);
 }
 
 int vprintk(const char *fmt, va_list ap) {
   int cnt = 0;
 
-  vprintfmt((void *)putc, &cnt, fmt, ap);
+  // vprintfmt((void *)putc, &cnt, fmt, ap);
 
   return cnt;
 }
