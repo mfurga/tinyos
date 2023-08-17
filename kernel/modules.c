@@ -1,11 +1,11 @@
-#include <tinyos/common/common.h>
 #include <tinyos/kernel/module.h>
+#include <tinyos/kernel/panic.h>
 
 static const struct module *modules[64];
 static unsigned module_idx = 0;
 
 void register_module(const struct module *m) {
-  ASSERT(module_idx < ARRAY_SIZE(modules));
+  assert(module_idx < ARRAY_SIZE(modules));
   modules[module_idx++] = m;
 }
 

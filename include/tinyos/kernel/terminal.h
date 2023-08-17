@@ -15,11 +15,11 @@ enum terminal_type {
 struct terminal {
   enum terminal_type type;
   void (*init)(void);
-  void (*write)(const char *buf, size_t len);
+  void (*write)(const char *buf, size_t size);
 };
 
 void early_init_terminals(void);
 
 void register_terminal(const struct terminal *term);
 
-void terminal_write(const char *buf, size_t len);
+void terminal_write(const char *buf, size_t size);

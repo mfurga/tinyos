@@ -7,8 +7,8 @@ void serial_term_init(void) {
   serial_init_port(COM1);
 }
 
-void serial_term_write(const char *buf, size_t len) {
-  for (size_t i = 0; i < len; i++) {
+void serial_term_write(const char *buf, size_t size) {
+  for (size_t i = 0; i < size; i++) {
     serial_write(COM1, (u8)buf[i]);
   }
 }
