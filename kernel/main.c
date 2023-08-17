@@ -7,9 +7,6 @@
 
 #include <multiboot.h>
 
-extern int __CTORS_START_PADDR;
-extern int __CTORS_END_PADDR;
-
 void parse_multiboot_info(u32 magic,
                           struct multiboot_info *info) {
   UNUSED(info);
@@ -19,6 +16,10 @@ void parse_multiboot_info(u32 magic,
 }
 
 void call_kernel_ctors(void) {
+  /* Start and end of the ctors section provided by the linker. */
+  extern int __CTORS_START_PADDR;
+  extern int __CTORS_END_PADDR;
+
   void (*ctor)(void);
 
   void **ctors_start = (void **)&__CTORS_START_PADDR;

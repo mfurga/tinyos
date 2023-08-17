@@ -13,7 +13,7 @@ void init_modules(void) {
   /* TODO: sort modules by their priority */
 
   for (unsigned i = 0; i < module_idx; i++) {
-    struct module *m = modules[i];
+    const struct module *m = modules[i];
     m->init();
   }
 }

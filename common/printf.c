@@ -1,3 +1,5 @@
+#if 0
+
 #include <tinyos/common/printf.h>
 #include <tinyos/common/common.h>
 #include <tinyos/common/string.h>
@@ -199,3 +201,4 @@ int snprintf(char *str, unsigned size, const char *fmt, ...) {
   return cnt;
 }
 
+#endif

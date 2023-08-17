@@ -21,3 +21,5 @@ struct terminal {
 void early_init_terminals(void);
 
 void register_terminal(const struct terminal *term);
+
+void terminal_write(const char *buf, size_t len);

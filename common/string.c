@@ -7,26 +7,19 @@ unsigned strlen(const char *s) {
   return l;
 }
 
-void *memset(void *s, unsigned char c, unsigned n) {
-  __asm__ __volatile__(
-    "mov edi, edx;"
-    "rep stosb;"
-    :
-    : "a" (c), "c" (n), "d" (s)
-    : "edi"
-  );
+void *memset(void *s, int c, size_t n) {
+  u8 *p = s;
+  for (size_t i = 0; i < n; i++) {
+    *p++ = (u8)c;
+  }
   return s;
 }
 
-void *memcpy(void *dst, void *src, unsigned n) {
-  __asm__ __volatile__(
-    "mov esi, eax;"
-    "mov edi, edx;"
-    "rep movsb;"
-    :
-    : "a" (src), "c" (n), "d" (dst)
-    : "edi", "esi"
-  );
+void *memcpy(void *dst, const void *src, size_t n) {
+  u8 *d = dst;
+  const u8 *s = src;
+  for (size_t i = 0; i < n; i++) {
+    *d++ = *s++;
+  }
   return dst;
 }
-
