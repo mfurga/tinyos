@@ -18,6 +18,6 @@
   #error Unsupported architecture.
 #endif
 
-void init_cpu_exception_handling(void);
+void init_exception_handling(void);
 
 void init_segmentation(void);

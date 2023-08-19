@@ -8,3 +8,5 @@ typedef void (*irq_handler_t)(int_context_t *ctx);
 void init_irq_handling(void);
 
 void irq_hander_register(u8 no, irq_handler_t handler);
+
+void irq_handle(int_context_t *ctx);

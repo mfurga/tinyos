@@ -44,3 +44,5 @@ typedef struct idt_entry_32 {
 } PACKED idt_entry_32_t;
 
 void idt_entry_set(u8 no, u16 segment, void *offset, u8 type, u8 dpl);
+
+void load_idt(void);

@@ -60,7 +60,7 @@ NORETURN CDECL void kernel_main(u32 magic,
 
   parse_multiboot_info(magic, info);
 
-  init_cpu_exception_handling();
+  init_exception_handling();
   init_irq_handling();
 
   init_segmentation();

@@ -3,11 +3,9 @@
 
 #include "idt.h"
 
-extern void (*exception_entry_points[32])(void);
-
 static idt_entry_32_t idt[256] ALIGNED(16);
 
-static void load_idt(void) {
+void load_idt(void) {
   struct {
     u16 limit;
     u32 address;
@@ -28,27 +26,6 @@ void idt_entry_set(u8 no, u16 segment, void *offset, u8 type, u8 dpl) {
   idt[no].present = 1;
   idt[no]._zero = 0;
 }
-
-void init_cpu_exception_handling(void) {
-  /* Set the entries for the x86 exceptions. */
-  for (u8 i = 0; i < 32; i++) {
-    idt_entry_set(i,
-                  X86_KERNEL_CODE_SEL,
-                  exception_entry_points[i],
-                  IDT_GATE_INT32,
-                  DPL_RING_0);
-  }
-
-  /* Allow `int3` to work from userspace. */
-  idt_entry_set(X86_EXP_BP,
-                X86_KERNEL_CODE_SEL,
-                exception_entry_points[X86_EXP_BP],
-                IDT_GATE_INT32,
-                DPL_RING_3);
-
-  load_idt();
-}
-
 
 // void idt_setup(void) {
 
