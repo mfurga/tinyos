@@ -20,6 +20,23 @@
 
 #ifndef ASM_FILE
 
+#include <tinyos/common/common.h>
+
+static inline u32 get_eflags(void) {
+  u32 eflags;
+  asm_volatile("pushfd;"
+               "pop %0;"
+               : "=g" (eflags)
+               : /* no input */
+               : /* no clobber */);
+  return eflags;
+}
+
+static inline bool are_interrupts_enabled(void) {
+  u32 eflags = get_eflags();
+  return !!(eflags & X86_FLAGS_IF);
+}
+
 struct i386_int_context {
   u32 ds;
   u32 edi, esi, ebp, esp, ebx, edx, ecx, eax;  /* pushed by `pushad` */

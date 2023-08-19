@@ -2,7 +2,7 @@
 #include <tinyos/kernel/panic.h>
 
 #include "idt.h"
-#include "../x86/pic.h"
+#include "../x86/pic_8259.h"
 
 extern void (*irq_entry_points[16])(void);
 static irq_handler_t irq_handlers[16];
@@ -16,18 +16,23 @@ void init_irq_handling(void) {
                   irq_entry_points[i],
                   IDT_GATE_INT32,
                   DPL_RING_0);
+
+    pic_8259_mask(i);
   }
 }
 
-void irq_register_hander(u8 no, irq_handler_t handler) {
+void irq_hander_register(u8 no, irq_handler_t handler) {
   assert(no < ARRAY_SIZE(irq_handlers));
   assert(irq_handlers[no] == NULL);
 
   irq_handlers[no] = handler;
+  pic_8259_unmask(no);
 }
 
 void irq_handle(int_context_t *ctx) {
   assert(ctx->irq_no < ARRAY_SIZE(irq_handlers));
+
+  pic_8259_eoi(ctx->irq_no);
 
   if (irq_handlers[ctx->irq_no] == NULL) {
     return;

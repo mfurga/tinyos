@@ -28,12 +28,12 @@ void init_exception_handling(void) {
                 IDT_GATE_INT32,
                 DPL_RING_3);
 
-  exception_register_handler(X86_EXP_BP, handle_breakpoint);
+  exception_handler_register(X86_EXP_BP, handle_breakpoint);
 
   load_idt();
 }
 
-void exception_register_handler(u8 no, exception_handler_t handler) {
+void exception_handler_register(u8 no, exception_handler_t handler) {
   assert(no < ARRAY_SIZE(exception_handlers));
   assert(exception_handlers[no] == NULL);
 

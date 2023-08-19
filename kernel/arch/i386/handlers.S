@@ -21,7 +21,7 @@ exception_\no:
 
 .macro irq no
 irq_\no:
-  push 0
+  push \no
   push 32 + \no
   jmp irq_common_stub
 .endm

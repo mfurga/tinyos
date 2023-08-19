@@ -65,7 +65,8 @@ NORETURN CDECL void kernel_main(u32 magic,
 
   init_segmentation();
 
-  // init_modules();
+  init_modules();
+  enable_interrupts();
 
   for (;;);
 }

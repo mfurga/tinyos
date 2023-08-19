@@ -42,3 +42,33 @@
 #define X86_EXP_30        30  /* reserved */
 #define X86_EXP_31        31  /* reserved */
 
+#define X86_FLAGS_CF   0x0001
+#define X86_FLAGS_PF   0x0004
+#define X86_FLAGS_AF   0x0010
+#define X86_FLAGS_ZF   0x0040
+#define X86_FLAGS_SF   0x0080
+#define X86_FLAGS_TF   0x0100
+#define X86_FLAGS_IF   0x0200
+#define X86_FLAGS_DF   0x0400
+#define X86_FLAGS_OV   0x0800
+#define X86_FLAGS_IOPL 0x3000
+#define X86_FLAGS_NT   0x4000
+#define X86_FLAGS_MD   0x8000
+
+#ifndef ASM_FILE
+
+#include <tinyos/common/common.h>
+
+static inline void int3(void) {
+  asm_volatile("int3");
+}
+
+static inline void enable_interrupts(void) {
+  asm_volatile("sti");
+}
+
+static inline void disable_interrupts(void) {
+  asm_volatile("cli");
+}
+
+#endif
