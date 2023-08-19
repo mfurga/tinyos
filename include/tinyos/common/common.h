@@ -29,6 +29,9 @@
 #define asm(x) __asm__(x)
 #define asm_volatile(...) __asm__ __volatile__(__VA_ARGS__)
 
+#define likely(x) __builtin_expect(!!(x), true)
+#define unlikely(x) __builtin_expect(!!(x), false)
+
 typedef uint8_t u8;
 typedef uint16_t u16;
 typedef uint32_t u32;

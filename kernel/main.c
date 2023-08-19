@@ -1,26 +1,11 @@
-#include <tinyos/kernel/hal.h>
 #include <tinyos/kernel/irq.h>
 #include <tinyos/kernel/printk.h>
 #include <tinyos/kernel/module.h>
 #include <tinyos/kernel/panic.h>
 #include <tinyos/kernel/terminal.h>
+#include <tinyos/kernel/mmap.h>
 
 #include <multiboot.h>
-
-void dump_memory_map(multiboot_memory_map_t *mmap, u32 mmap_length) {
-  assert(mmap_length % sizeof(multiboot_memory_map_t) == 0);
-
-  printk("\n");
-  printk("System memory map provided by the bootloader:\n");
-  printk("\n");
-  printk("NO  START                END                TYPE\n");
-  printk("------------------------------------------------\n");
-
-  for (size_t i = 0; i < mmap_length / sizeof(multiboot_memory_map_t); i++) {
-    printk("%02d: 0x%016llx - 0x%016llx %02d\n",
-      i, mmap[i].addr, mmap[i].addr + mmap[i].len - 1, mmap[i].type);
-  }
-}
 
 void parse_multiboot_info(u32 magic,
                           struct multiboot_info *info) {
@@ -39,16 +24,17 @@ void parse_multiboot_info(u32 magic,
   }
 
   if (info->flags & MULTIBOOT_INFO_BOOT_LOADER_NAME) {
-    const char *name = (const char *)info->boot_loader_name;
-    printk("Bootloader detected: %s\n", name);
+    // const char *name = (const char *)info->boot_loader_name;
+    // printk("Bootloader detected: %s\n", name);
   }
 
   if (info->flags & MULTIBOOT_INFO_CMDLINE) {
-    const char *cmdline = (const char *)info->cmdline;
-    printk("Cmdline: %s\n", cmdline);
+    // const char *cmdline = (const char *)info->cmdline;
+    // printk("Cmdline: %s\n", cmdline);
   }
 
-  dump_memory_map((multiboot_memory_map_t *)info->mmap_addr, info->mmap_length);
+  init_memory_map((multiboot_memory_map_t *)info->mmap_addr, info->mmap_length);
+  dump_memory_map();
 }
 
 void call_kernel_ctors(void) {
@@ -76,6 +62,8 @@ NORETURN CDECL void kernel_main(u32 magic,
 
   init_cpu_exception_handling();
   init_irq_handling();
+
+  init_segmentation();
 
   // init_modules();
 

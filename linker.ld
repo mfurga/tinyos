@@ -6,11 +6,11 @@ OUTPUT_FORMAT("elf32-i386", "elf32-i386", "elf32-i386")
 OUTPUT_ARCH(i386)
 ENTRY(_start)
 
-__KERNEL_PADDR = 0x100000;
+__KERNEL_START_PADDR = 0x100000;
 
 SECTIONS
 {
-  . = __KERNEL_PADDR;
+  . = __KERNEL_START_PADDR;
 
   .text :
   {
@@ -50,6 +50,6 @@ SECTIONS
     *(.eh_frame*)
   }
 
-  __KERNEL_END = .;
+  __KERNEL_END_PADDR = .;
 }
 
