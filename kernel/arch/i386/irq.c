@@ -22,6 +22,7 @@ void init_irq_handling(void) {
 }
 
 void irq_hander_register(u8 no, irq_handler_t handler) {
+  /* TODO: Add the ability to register more than one handler per IRQ. */
   assert(no < ARRAY_SIZE(irq_handlers));
   assert(irq_handlers[no] == NULL);
 

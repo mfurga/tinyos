@@ -42,6 +42,9 @@
 #define X86_EXP_30        30  /* reserved */
 #define X86_EXP_31        31  /* reserved */
 
+#define X86_IRQ_PC_TIMER   0
+#define X86_IRQ_KB         1
+
 #define X86_FLAGS_CF   0x0001
 #define X86_FLAGS_PF   0x0004
 #define X86_FLAGS_AF   0x0010

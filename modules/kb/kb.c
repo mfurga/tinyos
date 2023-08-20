@@ -37,7 +37,7 @@ static void keyboard_handler(int_context_t *context) {
 }
 
 void kb_init(void) {
-  irq_hander_register(1, keyboard_handler);
+  irq_hander_register(X86_IRQ_KB, keyboard_handler);
 }
 
 static const struct module kb_module = {

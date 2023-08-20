@@ -1,11 +1,19 @@
 #include <tinyos/kernel/panic.h>
 #include <tinyos/kernel/printk.h>
 
+static bool panic = false;
+
+bool in_panic(void) {
+  return panic;
+}
+
 void NORETURN _panic(const char *func,
                      const char *file,
                      int line,
                      const char *fmt,
                      ...) {
+  panic = true;
+
   va_list ap;
   va_start(ap, fmt);
 

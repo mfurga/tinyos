@@ -4,6 +4,7 @@
 #include <tinyos/kernel/panic.h>
 #include <tinyos/kernel/terminal.h>
 #include <tinyos/kernel/mmap.h>
+#include <tinyos/kernel/timer.h>
 
 #include <multiboot.h>
 
@@ -64,6 +65,7 @@ NORETURN CDECL void kernel_main(u32 magic,
   init_irq_handling();
 
   init_segmentation();
+  init_timer();
 
   init_modules();
   enable_interrupts();

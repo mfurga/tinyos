@@ -2,8 +2,11 @@
 #include <tinyos/kernel/printk.h>
 #include <tinyos/kernel/terminal.h>
 #include <tinyos/kernel/hal.h>
+#include <tinyos/kernel/timer.h>
+#include <tinyos/kernel/panic.h>
 
-#define PRINTK_BUF_SIZE 256
+#define BUF_SIZE 256
+#define PREFIX_BUF_SIZE 16
 
 static void printnum(void (*putc)(int, void *),
                      void *context,
@@ -165,13 +168,13 @@ void vprintfmt(void (*putc)(int, void *),
   }
 }
 
-struct vsnprintf_buf {
+struct vsnprintk_buf {
   char *str;
   size_t size;
   size_t cnt;
 };
 
-static void vsnprintf_putc(int ch, struct vsnprintf_buf *buf) {
+static void vsnprintk_putc(int ch, struct vsnprintk_buf *buf) {
   if (buf->cnt < buf->size) {
     *buf->str++ = (char)ch;
     buf->cnt++;
@@ -179,7 +182,7 @@ static void vsnprintf_putc(int ch, struct vsnprintf_buf *buf) {
 }
 
 int vsnprintk(char *buf, size_t size, const char *fmt, va_list ap) {
-  struct vsnprintf_buf b = {
+  struct vsnprintk_buf b = {
     .str = buf,
     .size = size - 1,
     .cnt = 0
@@ -189,7 +192,7 @@ int vsnprintk(char *buf, size_t size, const char *fmt, va_list ap) {
     return -1;
   }
 
-  vprintfmt((void *)vsnprintf_putc, &b, fmt, ap);
+  vprintfmt((void *)vsnprintk_putc, &b, fmt, ap);
 
   *b.str = '\0';
   return (int)b.cnt;
@@ -206,11 +209,36 @@ int snprintk(char *buf, size_t size, const char *fmt, ...) {
 }
 
 int vprintk(const char *fmt, va_list ap) {
-  static char buf[PRINTK_BUF_SIZE];
-  int cnt = 0;
+  static char buf[BUF_SIZE];
+  static char prefix_buf[PREFIX_BUF_SIZE];
+  int cnt;
+  bool prefix = true;
+
+  if (unlikely(fmt[0] == PRINTK_CTRL_CHAR)) {
+    switch (fmt[1]) {
+      case PRINTK_CTRL_NO_PREFIX:
+        prefix = false;
+        break;
+      default:
+        /* Do nothing */
+        break;
+    };
+    fmt += 2;
+  }
+
+  if (unlikely(in_panic())) {
+    prefix = false;
+  }
+
+  if (likely(prefix)) {
+    u64 time = timer_get_time();
+    cnt = snprintk(prefix_buf, sizeof(prefix_buf), "[%5llu.%06llu] ",
+      time / TIMER_SCALE, (time % TIMER_SCALE) / 1000);
+    /* TODO: Write to ring buf. */
+    terminal_write(prefix_buf, cnt);
+  }
 
   cnt = vsnprintk(buf, sizeof(buf), fmt, ap);
-
   /* TODO: Write to ring buf. */
   terminal_write(buf, cnt);
 
