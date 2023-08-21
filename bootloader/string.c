@@ -1,6 +1,7 @@
+#include "common.h"
 
 void *memset(void *src, unsigned char c, unsigned n) {
-  __asm__ __volatile__(
+  asm_volatile(
     "mov edi, edx;"
     "rep stosb;"
     :
@@ -11,7 +12,7 @@ void *memset(void *src, unsigned char c, unsigned n) {
 }
 
 void *memcpy(void *dst, void *src, unsigned n) {
-  __asm__ __volatile__(
+  asm_volatile(
     "mov esi, eax;"
     "mov edi, edx;"
     "rep movsb;"
@@ -21,4 +22,3 @@ void *memcpy(void *dst, void *src, unsigned n) {
   );
   return dst;
 }
-

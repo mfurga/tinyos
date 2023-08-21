@@ -15,7 +15,7 @@
 #define DLL             0
 #define DLH             1
 
-void serial_init(void) {
+void early_init_serial(void) {
   outb(COM1 + LCR, 0x3);  /* 8n1 */
   outb(COM1 + IER, 0);    /* no interrupt */
   outb(COM1 + FCR, 0);    /* no fifo */

@@ -143,11 +143,11 @@ print_string:
 ; === Data section ===
 ;
 
-banner db "Bootloader ver. alpha", 0xd, 0xa, 0xd, 0xa, 0
-lba_read db "[*] Reading sectors using LBA ...", 0xd, 0xa, 0
-chs_read db "[*] Reading sectors using CHS ...", 0xd, 0xa, 0
-disk_error db "[-] Failed to read sectors from the disk.", 0xd, 0xa, 0
-stage2_load db "[*] Loading stage 2 ...", 0x0d, 0x0a, 0
+banner db "*** TinyOS bootloader ***", 0xd, 0xa, 0xd, 0xa, 0
+lba_read db "Reading sectors using LBA ...", 0xd, 0xa, 0
+chs_read db "Reading sectors using CHS ...", 0xd, 0xa, 0
+disk_error db "Failed to read sectors from the disk.", 0xd, 0xa, 0
+stage2_load db "Loading stage 2 ...", 0x0d, 0x0a, 0
 
 drive_number db 0
 

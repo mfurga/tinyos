@@ -16,8 +16,6 @@
 
 #define PT_LOAD 1
 
-extern boot_params_t boot_params;
-
 extern u8 BOOTLOADER_SIZE;
 extern u8 DRIVE_NUMBER;
 
@@ -40,21 +38,23 @@ static void read_sectors(u32 no) {
 
   biosint(0x13, &in, &out);
 
-  if (out.flags & FLAG_CF) {
-    FATAL("Failed to read kernel into memory.");
+  if (out.flags & X86_FLAGS_CF) {
+    panic("Failed to read kernel into memory");
   }
 
   sector_no += no;
   load_addr += 512 * no;
 
   // FIXME: Works only for floppy disks!
+  /*
   if (sector_no > 18) {
     head_no += sector_no / 18;
     sector_no = sector_no % 18;
   }
+  */
 
   if (sector_no > 63) {
-    FATAL("Sector number too big!");
+    panic("Sector number too big");
   }
 }
 
@@ -74,12 +74,10 @@ static u16 fetch_word(u32 addr) {
   return *(u16 *)addr;
 }
 
-void NORETURN load_kernel(void) {
-  INFO("Loading kernel ...\n");
+void *load_kernel(void) {
+  printf("Loading kernel ...\n");
 
   u32 base_addr = BOOTLOADER_BASE;
-
-  //INFO("Reading kernel to %x\n", base_addr);
 
   sector_no = BOOTLOADER_SIZE + 1;
   head_no = 0;
@@ -93,7 +91,6 @@ void NORETURN load_kernel(void) {
     u32 ph_type = fetch_dword(ph_addr + PH_TYPE);
 
     if (ph_type == PT_LOAD) {
-
       u32 ph_filesz = fetch_dword(ph_addr + PH_FILESZ);
       u32 ph_offset = base_addr + fetch_dword(ph_addr + PH_OFFSET);
       u32 ph_vaddr = fetch_dword(ph_addr + PH_VADDR);
@@ -102,27 +99,9 @@ void NORETURN load_kernel(void) {
 
       memcpy((void *)ph_vaddr, (void *)ph_offset, ph_filesz);
     }
-
     ph_addr += phsize;
   }
 
   u32 entry_point = fetch_dword(base_addr + ELF_ENTRY);
-
-  // Save current video state.
-  store_video();
-
-  // Jump to kernel entry point.
-  __asm__ __volatile__(
-    "mov esi, ebx;"
-    "jmp eax;"
-    :
-    : "a" (entry_point), "b" (&boot_params)
-  );
-
-  // So dirty ...
-  //((void (*)(void))entry_point)();
-
-  // Never goes here, hopefully.
-  for (;;);
+  return (void *)entry_point;
 }
-

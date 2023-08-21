@@ -1,63 +1,84 @@
-/*
- * Common headers.
- */
-
 #pragma once
 
 #include <stdint.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdarg.h>
 
 #define NORETURN __attribute__((noreturn))
 #define NOINLINE __attribute__((noinline))
-#define PACKED   __attribute__((packed))
-#define CDECL    __attribute__((__cdecl__))
+#define ALWAYS_INLINE __attribute__((always_inline)) inline
+#define PACKED __attribute__((packed))
+#define WAEK __attribute__((weak))
+#define ALIGNED(x) __attribute__((aligned(x)))
+#define CDECL __attribute__((__cdecl__))
+#define CONSTRUCTOR __attribute__((constructor))
 
-#define NULL 0
-#define UNUSED(x) ((void)x)
+#define UNUSED(x)  ((void)x)
+#define STR(s)     STR_(s)
+#define STR_(s)    #s
 
-#define FLAG_CF 0b1
-#define FLAG_PF 0b100
-#define FLAG_ZF 0b1000000
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+
+#define ASSERT(x) do { /* nothing */ } while (0)
+#define STATIC_ASSERT(x) _Static_assert(x, "Static assertion failed")
+
+#define asm(x) __asm__(x)
+#define asm_volatile(...) __asm__ __volatile__(__VA_ARGS__)
+
+#define likely(x) __builtin_expect(!!(x), true)
+#define unlikely(x) __builtin_expect(!!(x), false)
 
 typedef uint8_t u8;
-typedef int8_t s8;
-
 typedef uint16_t u16;
-typedef int16_t s16;
-
 typedef uint32_t u32;
-typedef int32_t s32;
-
 typedef uint64_t u64;
+typedef int8_t s8;
+typedef int16_t s16;
+typedef int32_t s32;
 typedef int64_t s64;
+
+#define X86_FLAGS_CF   0x0001
+#define X86_FLAGS_PF   0x0004
+#define X86_FLAGS_AF   0x0010
+#define X86_FLAGS_ZF   0x0040
+#define X86_FLAGS_SF   0x0080
+#define X86_FLAGS_TF   0x0100
+#define X86_FLAGS_IF   0x0200
+#define X86_FLAGS_DF   0x0400
+#define X86_FLAGS_OV   0x0800
+#define X86_FLAGS_IOPL 0x3000
+#define X86_FLAGS_NT   0x4000
+#define X86_FLAGS_MD   0x8000
 
 static inline u8 inb(u16 port) {
   u8 result;
-  __asm__ __volatile__ ("in al, dx" : "=a" (result) : "d" (port));
+  asm_volatile("in al, dx" : "=a" (result) : "d" (port));
   return result;
 }
 
 static inline u16 inw(u16 port) {
   u16 result;
-  __asm__ __volatile__ ("in ax, dx" : "=a" (result) : "d" (port));
+  asm_volatile("in ax, dx" : "=a" (result) : "d" (port));
   return result;
 }
 
 static inline u32 ind(u16 port) {
   u32 result;
-  __asm__ __volatile__ ("in eax, dx" : "=a" (result) : "d" (port));
+  asm_volatile("in eax, dx" : "=a" (result) : "d" (port));
   return result;
 }
 
 static inline void outb(u16 port, u8 data) {
-  __asm__ __volatile__ ("out dx, al" : : "a" (data), "d" (port));
+  asm_volatile("out dx, al" : : "a" (data), "d" (port));
 }
 
 static inline void outw(u16 port, u16 data) {
-  __asm__ __volatile__ ("out dx, ax" : : "a" (data), "d" (port));
+  asm_volatile("out dx, ax" : : "a" (data), "d" (port));
 }
 
 static inline void outd(u16 port, u32 data) {
-  __asm__ __volatile__ ("out dx, eax" : : "a" (data), "d" (port));
+  asm_volatile("out dx, eax" : : "a" (data), "d" (port));
 }
 
 static inline void io_delay(void) {
@@ -66,44 +87,45 @@ static inline void io_delay(void) {
 }
 
 static inline void cli(void) {
-  __asm__ __volatile__("cli");
+  asm_volatile("cli");
 }
 
 static inline void sti(void) {
-  __asm__ __volatile__("sti");
+  asm_volatile("sti");
 }
 
 static inline void set_fs(u16 seg) {
-  __asm__ __volatile__("mov fs, ax;" : : "a" (seg));
+  asm_volatile("mov fs, ax;" : : "a" (seg));
 }
 
 static inline void set_gs(u16 seg) {
-  __asm__ __volatile__("mov gs, ax;" : : "a" (seg));
+  asm_volatile("mov gs, ax;" : : "a" (seg));
 }
 
 static inline u16 get_fs(void) {
   u16 result;
-  __asm__ __volatile__("mov ax, fs;" : "=a" (result));
+  asm_volatile("mov ax, fs;" : "=a" (result));
   return result;
 }
 
 static inline u16 get_gs(void) {
   u16 result;
-  __asm__ __volatile__("mov ax, gs;" : "=a" (result));
+  asm_volatile("mov ax, gs;" : "=a" (result));
   return result;
 }
 
 static inline u32 get_eflags(void) {
   u32 result;
-  __asm__ __volatile__(
-    "pushfd;"
-    "pop eax;"
-      : "=a" (result));
+  asm_volatile("pushfd;"
+               "pop eax;"
+               : "=a" (result)
+               : /* no input */
+               : /* no clobber */);
   return result;
 }
 
 static inline void halt(void) {
-  __asm__ __volatile__("hlt");
+  asm_volatile("hlt");
 }
 
 struct regs {
@@ -145,6 +167,18 @@ struct regs {
   };
 };
 
+#define assert(x) \
+  do { if (!(x)) panic("assert failed: %s\n", #x); } while (0)
+
+#define panic(...) _panic(__FUNCTION__, __FILE__, __LINE__, __VA_ARGS__)
+
+/* panic.c */
+NORETURN void _panic(const char *func,
+                     const char *file,
+                     int line,
+                     const char *fmt,
+                     ...);
+
 /* biosint.asm */
 void biosint(u8 no_int, const struct regs *in, struct regs *out);
 
@@ -156,76 +190,21 @@ void *memset(void *src, unsigned char c, unsigned n);
 
 void *memcpy(void *dst, void *src, unsigned n);
 
-/* stdio.c */
-
-#define DEBUG 1
-
-#ifdef DEBUG
-#  define SAYF(x...) printf(x)
-#else
-#  define SAYF(x...)
-#endif
-
-#define INFO(x...) do { \
-    SAYF("[*] " x); \
-    SAYF("\n"); \
-  } while (0)
-
-#define OK(x...) do { \
-    SAYF("[+] " x); \
-    SAYF("\n"); \
-  } while (0)
-
-#define WARN(x...) do { \
-    SAYF("[!] WARNING: " x); \
-    SAYF("\n"); \
-  } while (0)
-
-#define FATAL(x...) do { \
-    SAYF("[-] FATAL: " x); \
-    SAYF("\n"); \
-    for(;;); \
-  } while (0)
-
+/* basic_printf.c */
 void putchar(char c);
 void puts(const char *s);
 void printf(const char *fmt, ...);
-
-/* boot_params */
-
-#define MEMORY_MAX_ENTRIES 128
-
-typedef struct {
-  u64 addr;
-  u64 length;
-  u32 type;
-} PACKED memory_entry_t;
-
-typedef struct boot_params_s {
-  struct {
-    u8 mode;
-    u8 page;
-    u8 x;
-    u8 y;
-    u8 cols;
-    u8 lines;
-  } video;
-
-  memory_entry_t memory_map[MEMORY_MAX_ENTRIES];
-  u16 memory_entries;
-
-} PACKED boot_params_t;
-
-/* video.c */
-void set_video(void);
-void store_video(void);
+void vprintf(const char *fmt, va_list ap);
 
 /* memory */
 void detect_memory_e820(void);
 
 /* loader.c */
-void NORETURN load_kernel(void);
+void *load_kernel(void);
 
 /* serial.c */
-void serial_init(void);
+void early_init_serial(void);
 void serial_putchar(u8 ch);
+
+/* a20.c */
+void enable_a20(void);

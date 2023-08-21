@@ -1,11 +1,4 @@
-/*
- * Test and enable A20 line.
- */
-
 #include "common.h"
-
-#define _str(a) #a
-#define STR(a) _str(a)
 
 /* Int 90h */
 #define A20_TEST_ADDR (4 * 0x90)
@@ -24,7 +17,7 @@ static void disable_a20(void) {
 /* Returns 1 if A20 line is enabled, 0 otherwise. */
 static int test_a20_single(void) {
   int r;
-  __asm__ __volatile__(
+  asm_volatile(
     "xor eax, eax;"
     "mov esi, " STR(A20_TEST_ADDR) ";"
     "mov edi, " STR(A20_TEST_ADDR + 0x100000) ";"
@@ -44,7 +37,7 @@ static int test_a20_single(void) {
     "setne al;"
     : "=a" (r)
     :
-    : "edx", "esi", "edi"
+    : "edx", "esi", "edi", "cc"
   );
   return r;
 }
@@ -68,7 +61,7 @@ static void enable_a20_bios(void) {
   biosint(0x15, &in, NULL);
 }
 
-static int empty_8042(void) {
+static void empty_8042(void) {
   u8 status;
   int loops = MAX_8042_LOOPS;
 
@@ -76,7 +69,7 @@ static int empty_8042(void) {
     status = inb(0x64);
 
     if ((status & 2) == 0) {
-      return 0;
+      return;
     }
 
     if (status & 1) {
@@ -84,8 +77,6 @@ static int empty_8042(void) {
       (void)inb(0x60);
     }
   }
-
-  return -1;
 }
 
 static void enable_a20_kbc(void) {
@@ -120,29 +111,24 @@ void enable_a20(void) {
   while (loops--) {
 
     if (test_a20()) {
-      goto success;
+      return;
     }
 
     enable_a20_bios();
     if (test_a20()) {
-      goto success;
+      return;
     }
 
     enable_a20_kbc();
     if (test_a20()) {
-      goto success;
+      return;
     }
 
     enable_a20_fast();
     if (test_a20()) {
-      goto success;
+      return;
     }
   }
 
-  FATAL("Failed to enable A20.");
-  return;
-
-success:
-  OK("A20 successfully enabled.");
+  panic("Failed to enable A20 line");
 }
-

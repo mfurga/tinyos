@@ -1,17 +1,40 @@
 #include "common.h"
-#include "a20.h"
+#include "vbe.h"
 
-boot_params_t boot_params;
+#include "multiboot.h"
 
-void NORETURN main(void) {
-  serial_init();
+struct multiboot_info mbi;
+
+struct vbe_info_block vbe_info_block;
+
+NORETURN void main(void) {
+  early_init_serial();
 
   enable_a20();
 
   detect_memory_e820();
 
-  set_video();
+  vbe_get_info_block(&vbe_info_block);
+  printf("VGE version: %d\n", (u32)vbe_info_block.VbeVersion);
 
-  load_kernel();
+  u16 mode = 0;
+  mode |= (1 << 14);
+  mode |= 0x18;
+  vbe_get_mode_info(mode);
+
+  // vbe_set_video_mode(0x118);
+
+  void *entry = load_kernel();
+
+  /* Jump to the kernel entry point */
+  asm_volatile(
+    "jmp ecx;"
+    : /* no output */
+    : "a" (MULTIBOOT_BOOTLOADER_MAGIC),
+      "b" (&mbi),
+      "c" (entry)
+    : /* no clobber */
+  );
+
+  for (;;);
 }
-

@@ -1,4 +1,3 @@
-#include <stdarg.h>
 #include "common.h"
 
 static void bios_putchar(char c) {
@@ -13,8 +12,8 @@ void putchar(char c) {
   if (c == '\n') {
     bios_putchar('\r');
   }
+
   bios_putchar(c);
-  
   serial_putchar(c);
 }
 
@@ -24,7 +23,24 @@ void puts(const char *s) {
   }
 }
 
-static void print_dec(int n) {
+static void print_uint(unsigned int n) {
+  char buff[11] = {0};
+  int idx = 9;
+
+  if (n == 0) {
+    putchar('0');
+    return;
+  }
+
+  while (n > 0) {
+    buff[idx--] = '0' + (n % 10);
+    n /= 10;
+  }
+
+  puts(buff + idx + 1);
+}
+
+static void print_int(int n) {
   char buff[11] = {0};
   int idx = 9;
 
@@ -72,10 +88,7 @@ static void print_hex(unsigned int n) {
   puts(buff + idx + 1);
 }
 
-void printf(const char *fmt, ...) {
-  va_list l;
-  va_start(l, fmt);
-
+void vprintf(const char *fmt, va_list ap) {
   const char *p = fmt;
   while (*p != '\0') {
     if (*p != '%') {
@@ -88,19 +101,23 @@ void printf(const char *fmt, ...) {
     switch (*p) {
       case 'i':
       case 'd':
-        print_dec(va_arg(l, int));
+        print_int(va_arg(ap, int));
+      break;
+
+      case 'u':
+        print_uint(va_arg(ap, unsigned int));
       break;
 
       case 'x':
-        print_hex(va_arg(l, unsigned int));
+        print_hex(va_arg(ap, unsigned int));
       break;
 
       case 's':
-        puts(va_arg(l, const char *));
+        puts(va_arg(ap, const char *));
       break;
 
       case 'c':
-        putchar((char)va_arg(l, unsigned));
+        putchar((char)va_arg(ap, unsigned));
       break;
 
       case '\0':
@@ -109,6 +126,12 @@ void printf(const char *fmt, ...) {
     p++;
   }
 
-  va_end(l);
+  va_end(ap);
 }
 
+void printf(const char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  vprintf(fmt, ap);
+  va_end(ap);
+}
