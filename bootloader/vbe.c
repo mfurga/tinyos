@@ -191,10 +191,9 @@ void print_video_modes(void) {
         video_modes[i].yres
       );
     } else {
-      printf("%s [%u] %x %u x %u x %u\n",
+      printf("%s [%u] %u x %u x %u\n",
         prefix,
         i,
-        video_modes[i].mode,
         video_modes[i].xres,
         video_modes[i].yres,
         video_modes[i].bpp
