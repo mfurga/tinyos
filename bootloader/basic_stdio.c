@@ -1,25 +1,47 @@
 #include "common.h"
 
-static void bios_putchar(char c) {
-  struct regs in;
+// static void bios_putchar(char c) {
+//   struct regs in;
+//   regsinit(&in);
+//   in.ah = 0x0e;
+//   in.al = c;
+//   biosint(0x10, &in, NULL);
+// }
+
+char getchar(void) {
+  struct regs in, out;
   regsinit(&in);
-  in.ah = 0x0e;
-  in.al = c;
-  biosint(0x10, &in, NULL);
+  regsinit(&out);
+
+  in.ah = 0;
+  biosint(0x16, &in, &out);
+
+  return out.al;
 }
 
-void putchar(char c) {
-  if (c == '\n') {
-    bios_putchar('\r');
+void getline(char *buf, size_t sz) {
+  size_t idx = 0;
+  char c;
+  while ((c = getchar()) != '\r' && idx < sz - 1) {
+    buf[idx++] = c;
+    putc(c);
   }
+  putc('\n');
+  buf[idx] = '\0';
+}
 
-  bios_putchar(c);
+void putc(char c) {
+  if (c & IS_COLOR) {
+    console_set_color(c);
+    return;
+  }
+  console_putc(c);
   serial_putchar(c);
 }
 
 void puts(const char *s) {
   for (; *s != '\0'; s++) {
-    putchar(*s);
+    putc(*s);
   }
 }
 
@@ -28,7 +50,7 @@ static void print_uint(unsigned int n) {
   int idx = 9;
 
   if (n == 0) {
-    putchar('0');
+    putc('0');
     return;
   }
 
@@ -45,7 +67,7 @@ static void print_int(int n) {
   int idx = 9;
 
   if (n == 0) {
-    putchar('0');
+    putc('0');
     return;
   }
 
@@ -56,7 +78,7 @@ static void print_int(int n) {
   }
 
   if (n < 0) {
-    putchar('-');
+    putc('-');
     n = -n;
   }
 
@@ -72,11 +94,11 @@ static void print_hex(unsigned int n) {
   char buff[9] = {0};
   int idx = 7;
 
-  putchar('0');
-  putchar('x');
+  putc('0');
+  putc('x');
 
   if (n == 0) {
-    putchar('0');
+    putc('0');
     return;
   }
 
@@ -91,8 +113,9 @@ static void print_hex(unsigned int n) {
 void vprintf(const char *fmt, va_list ap) {
   const char *p = fmt;
   while (*p != '\0') {
+
     if (*p != '%') {
-      putchar(*p);
+      putc(*p);
       p++;
       continue;
     }
@@ -117,7 +140,7 @@ void vprintf(const char *fmt, va_list ap) {
       break;
 
       case 'c':
-        putchar((char)va_arg(ap, unsigned));
+        putc((char)va_arg(ap, unsigned));
       break;
 
       case '\0':
@@ -126,6 +149,7 @@ void vprintf(const char *fmt, va_list ap) {
     p++;
   }
 
+  console_set_color(C_GRAY[0]);
   va_end(ap);
 }
 

@@ -5,15 +5,6 @@
 #define MAX_8042_LOOPS 10000
 #define MAX_TEST_A20_LOOPS 10000
 
-/*
-static void disable_a20(void) {
-  struct regs in;
-  regsinit(&in);
-  in.ax = 0x2400;
-  biosint(0x15, &in, NULL);
-}
-*/
-
 /* Returns 1 if A20 line is enabled, 0 otherwise. */
 static int test_a20_single(void) {
   int r;

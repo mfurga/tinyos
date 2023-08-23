@@ -172,6 +172,19 @@ struct regs {
 
 #define panic(...) _panic(__FUNCTION__, __FILE__, __LINE__, __VA_ARGS__)
 
+#define IS_COLOR 0x80
+#define C_BLACK "\x80"
+#define C_BLUE "\x81"
+#define C_GREEN "\x82"
+#define C_CYAN "\x83"
+#define C_RED "\x84"
+#define C_PURPLE "\x85"
+#define C_BROWN "\x86"
+#define C_GRAY "\x87"
+#define C_DARK_GRAY "\x88"
+#define C_YELLOW "\x8e"
+#define C_WHILE "\x8f"
+
 /* panic.c */
 NORETURN void _panic(const char *func,
                      const char *file,
@@ -186,15 +199,25 @@ void biosint(u8 no_int, const struct regs *in, struct regs *out);
 void regsinit(struct regs *r);
 
 /* string.c */
-void *memset(void *src, unsigned char c, unsigned n);
+size_t strlen(const char *s);
+unsigned str_to_uint(const char *s);
 
-void *memcpy(void *dst, void *src, unsigned n);
+void *memset(void *s, u8 v, size_t n);
+void *memset16(void *s, u16 v, size_t n);
+void *memset32(void *s, u32 v, size_t n);
 
-/* basic_printf.c */
+void *memcpy(void *dst, const void *src, size_t n);
+void *memcpy16(void *dst, const void *src, size_t n);
+void *memcpy32(void *dst, const void *src, size_t n);
+
+/* basic_stdio.c */
 void putchar(char c);
 void puts(const char *s);
 void printf(const char *fmt, ...);
 void vprintf(const char *fmt, va_list ap);
+char getchar(void);
+void putc(char c);
+void getline(char *buff, size_t sz);
 
 /* memory */
 void detect_memory_e820(void);
@@ -208,3 +231,9 @@ void serial_putchar(u8 ch);
 
 /* a20.c */
 void enable_a20(void);
+
+/* console.c */
+void init_console(void);
+void console_clear_screen(void);
+void console_set_color(u8 color);
+void console_putc(u8 ch);
