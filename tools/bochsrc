@@ -675,7 +675,7 @@ private_colormap: enabled=0
 # The optional parameter 'write_protected' can be used to control the media
 # write protect switch. By default it is turned off.
 #=======================================================================
-floppya: 1_44=build/os.img, status=inserted
+floppya: 1_44=build/tinyos.img, status=inserted
 #floppya: image=../1.44, status=inserted
 #floppya: 1_44=/dev/fd0H1440, status=inserted
 #floppya: 1_2=../1_2, status=inserted
@@ -771,7 +771,7 @@ ata3: enabled=0, ioaddr1=0x168, ioaddr2=0x360, irq=9
 #ata0-slave: type=cdrom, path="drive", status=inserted
 #ata0-slave: type=cdrom, path=/dev/rcd0d, status=inserted 
 
-#ata0-master: type=disk, path="build/os.img", mode=flat, cylinders=0, heads=0, spt=0, model="Generic 1234", biosdetect=auto, translation=auto
+ata0-master: type=disk, path="build/tinyos.img", mode=flat, cylinders=0, heads=0, spt=0
 
 #=======================================================================
 # BOOT:
@@ -785,8 +785,8 @@ ata3: enabled=0, ioaddr1=0x168, ioaddr2=0x360, irq=9
 #   boot: cdrom, floppy, disk
 #=======================================================================
 #boot: floppy
-#boot: disk
-boot: floppy
+boot: disk
+#boot: floppy
 
 #=======================================================================
 # FLOPPY_BOOTSIG_CHECK: disabled=[0|1]

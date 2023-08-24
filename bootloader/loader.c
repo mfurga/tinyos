@@ -54,6 +54,11 @@ static void read_sectors(u32 no) {
   */
 
   if (sector_no > 63) {
+    head_no += sector_no / 63;
+    sector_no = sector_no % 63;
+  }
+
+  if (sector_no > 63) {
     panic("Sector number too big");
   }
 }

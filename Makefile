@@ -1,12 +1,12 @@
 # Kernel makefile.
 
 VERBOSE := 0
-DEBUG := 1
+DEBUG := 0
 
 BUILD_DIR := build
 KIMAGE := $(BUILD_DIR)/kernel.elf
 BIMAGE := $(BUILD_DIR)/bootloader/boot.img
-OS_IMAGE := $(BUILD_DIR)/os.img
+OS_IMAGE := $(BUILD_DIR)/tinyos.img
 
 ifeq ($(VERBOSE), 1)
 	Q :=
@@ -36,13 +36,16 @@ CFLAGS := $(D) -Wall -Wextra -std=c11 -O2 -Iinclude -Iinclude/3rd_party -ffreest
 LDFLASGS := -lgcc -static -nostdlib -Tlinker.ld
 
 SRCS := $(shell find * -type f -name '*.[c|S]' -not -path 'bootloader/*')
+FONTS := $(shell find * -type f -name '*.psf' -not -path 'bootloader/*')
 
 OBJS1 := $(SRCS:%.c=$(BUILD_DIR)/%.o)
+OBJS1 += $(FONTS:%.psf=$(BUILD_DIR)/%.o)
 OBJS := $(OBJS1:%.S=$(BUILD_DIR)/%.o)
 
 all: $(BIMAGE) $(KIMAGE)
 	@cat $(BIMAGE) > $(OS_IMAGE)
 	@cat $(KIMAGE) >> $(OS_IMAGE)
+	@truncate -s 8M $(OS_IMAGE)
 	@printf "\033[0;32mOS image created!\n\033[0m"
 
 $(BIMAGE): $(KIMAGE)
@@ -67,6 +70,11 @@ $(BUILD_DIR)/%.o: %.S
 	@mkdir -p $(dir $@)
 	@echo "Compiling $^"
 	$(Q)$(AS) $(ASFLAGS) $< -o $@
+
+$(BUILD_DIR)/%.o: %.psf
+	@mkdir -p $(dir $@)
+	@echo "Converting font $^"
+	$(Q)$(OBJCOPY) -O elf32-i386 -I binary $< $@
 
 .PHONY: clean
 clean:
