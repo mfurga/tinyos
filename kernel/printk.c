@@ -117,6 +117,10 @@ void vprintfmt(void (*putc)(int, void *),
         base = 8;
         goto uint_get_print;
 
+      case 'b':
+        base = 2;
+        goto uint_get_print;
+
       /* pointer (unsigned) */
       case 'p':
         base = 16;
@@ -234,11 +238,13 @@ int vprintk(const char *fmt, va_list ap) {
     u64 time = timer_get_time();
     cnt = snprintk(prefix_buf, sizeof(prefix_buf), "[%5llu.%06llu] ",
       time / TIMER_SCALE, (time % TIMER_SCALE) / 1000);
+
     /* TODO: Write to ring buf. */
     terminal_write(prefix_buf, cnt);
   }
 
   cnt = vsnprintk(buf, sizeof(buf), fmt, ap);
+
   /* TODO: Write to ring buf. */
   terminal_write(buf, cnt);
 

@@ -5,36 +5,33 @@
 #include <tinyos/kernel/terminal.h>
 #include <tinyos/kernel/mmap.h>
 #include <tinyos/kernel/timer.h>
+#include <tinyos/modules/fb.h>
 
 #include <multiboot.h>
 
 void parse_multiboot_info(u32 magic,
-                          struct multiboot_info *info) {
+                          struct multiboot_info *mbi) {
   printk("Paring multiboot info structure ...\n");
 
   if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
     panic("Kernel requires the multiboot-compatible bootloader");
   }
 
-  if (!(info->flags & MULTIBOOT_INFO_MEMORY)) {
-    panic("No basic memory information provided by the bootloader");
-  }
-
-  if (!(info->flags & MULTIBOOT_INFO_MEM_MAP)) {
+  if (!(mbi->flags & MULTIBOOT_INFO_MEM_MAP)) {
     panic("No memory map provided by the bootloader");
   }
 
-  if (info->flags & MULTIBOOT_INFO_BOOT_LOADER_NAME) {
-    // const char *name = (const char *)info->boot_loader_name;
-    // printk("Bootloader detected: %s\n", name);
+  if (mbi->flags & MULTIBOOT_INFO_BOOT_LOADER_NAME) {
+    printk("Bootloader detected: %s\n", (const char *)mbi->boot_loader_name);
   }
 
-  if (info->flags & MULTIBOOT_INFO_CMDLINE) {
-    // const char *cmdline = (const char *)info->cmdline;
-    // printk("Cmdline: %s\n", cmdline);
+  if (mbi->flags & MULTIBOOT_INFO_FRAMEBUFFER_INFO) {
+    setup_fb_from_multiboot(mbi);
   }
 
-  init_memory_map((multiboot_memory_map_t *)info->mmap_addr, info->mmap_length);
+  init_memory_map((multiboot_memory_map_t *)mbi->mmap_addr, mbi->mmap_length);
+
+  printk("Memory map provided by the bootloader:\n");
   dump_memory_map();
 }
 
@@ -61,14 +58,16 @@ NORETURN CDECL void kernel_main(u32 magic,
 
   parse_multiboot_info(magic, info);
 
+  // init_fb_terminal();
+
   init_exception_handling();
   init_irq_handling();
 
   init_segmentation();
   init_timer();
 
-  init_modules();
-  enable_interrupts();
+  // init_modules();
+  // enable_interrupts();
 
   for (;;);
 }

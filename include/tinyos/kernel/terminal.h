@@ -9,7 +9,8 @@
 
 enum terminal_type {
   TERMINAL_SERIAL,
-  TERMINAL_VIDEO
+  TERMINAL_VIDEO_TEXT,
+  TERMINAL_VIDEO_GRAPHICAL
 };
 
 struct terminal {
@@ -18,8 +19,10 @@ struct terminal {
   void (*write)(const char *buf, size_t size);
 };
 
+void register_terminal(const struct terminal *term);
+
 void early_init_terminals(void);
 
-void register_terminal(const struct terminal *term);
+void set_curr_video_terminal(const struct terminal *term);
 
 void terminal_write(const char *buf, size_t size);

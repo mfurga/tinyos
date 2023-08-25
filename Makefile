@@ -1,9 +1,12 @@
 # Kernel makefile.
 
+ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
 VERBOSE := 0
 DEBUG := 0
 
 BUILD_DIR := build
+BUILD_DIR := $(ROOT_DIR)/$(BUILD_DIR)
 KIMAGE := $(BUILD_DIR)/kernel.elf
 BIMAGE := $(BUILD_DIR)/bootloader/boot.img
 OS_IMAGE := $(BUILD_DIR)/tinyos.img
@@ -31,7 +34,7 @@ OBJCOPY := $(CROSS_COMPILE)-objcopy
 OBJDUMP := $(CROSS_COMPILE)-objdump
 
 ASFLAGS := $(D) -Iinclude -Iinclude/3rd_party -c
-CFLAGS := $(D) -Wall -Wextra -std=c11 -O2 -Iinclude -Iinclude/3rd_party -ffreestanding -masm=intel
+CFLAGS := $(D) -Wall -Wextra -Wno-array-bounds -std=c11 -O2 -Iinclude -Iinclude/3rd_party -ffreestanding -masm=intel
 
 LDFLASGS := -lgcc -static -nostdlib -Tlinker.ld
 
@@ -49,7 +52,7 @@ all: $(BIMAGE) $(KIMAGE)
 	@printf "\033[0;32mOS image created!\n\033[0m"
 
 $(BIMAGE): $(KIMAGE)
-	@cd bootloader && cat ../$(BUILD_DIR)/KERNEL_SIZE | $(MAKE) KERNEL_SIZE=$$(xargs)
+	@cd bootloader && cat $(BUILD_DIR)/KERNEL_SIZE | $(MAKE) KERNEL_SIZE=$$(xargs)
 
 $(KIMAGE): $(OBJS)
 	@echo "Linking ..."
@@ -74,7 +77,7 @@ $(BUILD_DIR)/%.o: %.S
 $(BUILD_DIR)/%.o: %.psf
 	@mkdir -p $(dir $@)
 	@echo "Converting font $^"
-	$(Q)$(OBJCOPY) -O elf32-i386 -I binary $< $@
+	$(Q)cd $(shell dirname $<) && $(OBJCOPY) -O elf32-i386 -I binary $(shell basename $<) $@
 
 .PHONY: clean
 clean:

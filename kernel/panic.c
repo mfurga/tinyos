@@ -7,7 +7,7 @@ bool in_panic(void) {
   return panic;
 }
 
-void NORETURN _panic(const char *func,
+NORETURN void _panic(const char *func,
                      const char *file,
                      int line,
                      const char *fmt,

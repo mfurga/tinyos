@@ -14,7 +14,7 @@ void video_term_write(const char *buf, size_t size) {
 }
 
 static const struct terminal video_term = {
-  .type = TERMINAL_VIDEO,
+  .type = TERMINAL_VIDEO_TEXT,
   .init = &video_term_init,
   .write = &video_term_write
 };

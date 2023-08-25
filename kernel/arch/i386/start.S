@@ -32,7 +32,7 @@ _start:
   .long 0                                           /* load_end_addr */
   .long 0                                           /* bss_end_addr */
   .long 0                                           /* entry_addr */
-  .long 1                                           /* mode_type */
+  .long 0                                           /* mode_type */
   .long 0                                           /* width */
   .long 0                                           /* height */
   .long 32                                          /* color depth */
