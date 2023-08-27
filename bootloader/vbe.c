@@ -103,12 +103,22 @@ bool vbe_get_mode_info_block(u16 mode, struct VbeModeInfoBlock *mib) {
 }
 
 static void multiboot_save_framebuffer_info(u16 mode) {
+  if (mode == 0x03) {
+    mbi.flags |= MULTIBOOT_INFO_FRAMEBUFFER_INFO;
+    mbi.framebuffer_addr = 0xb8000;
+    mbi.framebuffer_width = 80;
+    mbi.framebuffer_height = 25;
+    mbi.framebuffer_bpp = 16;
+    mbi.framebuffer_type = MULTIBOOT_FRAMEBUFFER_TYPE_EGA_TEXT;
+    mbi.framebuffer_pitch = 2 * 80;
+    return;
+  }
+
   if (!vbe_get_mode_info_block(mode, &__mib)) {
     return;
   }
 
   mbi.flags |= MULTIBOOT_INFO_FRAMEBUFFER_INFO;
-
   mbi.framebuffer_addr = (u64)__mib.PhysBasePtr;
   if (__ib.VbeVersion >= 0x300) {
     mbi.framebuffer_pitch = (u32)__mib.LinBytesPerScanLine;
