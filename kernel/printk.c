@@ -117,6 +117,7 @@ void vprintfmt(void (*putc)(int, void *),
         base = 8;
         goto uint_get_print;
 
+      /* binary (unsigned) */
       case 'b':
         base = 2;
         goto uint_get_print;
@@ -240,13 +241,13 @@ int vprintk(const char *fmt, va_list ap) {
       time / TIMER_SCALE, (time % TIMER_SCALE) / 1000);
 
     /* TODO: Write to ring buf. */
-    terminal_write(prefix_buf, cnt);
+    terminal_write(prefix_buf, cnt, PRINTK_COLOR);
   }
 
   cnt = vsnprintk(buf, sizeof(buf), fmt, ap);
 
   /* TODO: Write to ring buf. */
-  terminal_write(buf, cnt);
+  terminal_write(buf, cnt, PRINTK_COLOR);
 
   return cnt;
 }

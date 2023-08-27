@@ -17,10 +17,12 @@
 #define COLOR_YELLOW        14
 #define COLOR_WHITE         15
 
-#define VGA_ENTRY_MAKE(c, f, b) ((((b) & 0xf) << 12) | \
-                                 (((f) & 0xf) << 8) |  \
-                                 (((c) & 0xff)))
+#define VGA_ENTRY_MAKE(ch, col) ((((col) & 0xff) << 8) | \
+                                 (((ch) & 0xff)))
 
 #define VGA_ENTRY_CHAR(e) ((e) & 0xff)
 #define VGA_ENTRY_FG(e) (((e) >> 8) & 0xf)
 #define VGA_ENTRY_BG(e) (((e) >> 12) & 0xf)
+
+#define VGA_MAKE_COLOR(f, b) (((b) & 0xf) << 4 | \
+                              ((f) & 0xf))

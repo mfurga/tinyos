@@ -5,6 +5,7 @@
 #include <tinyos/kernel/terminal.h>
 #include <tinyos/kernel/mmap.h>
 #include <tinyos/kernel/timer.h>
+
 #include <tinyos/modules/fb.h>
 
 #include <multiboot.h>
@@ -54,11 +55,11 @@ void call_kernel_ctors(void) {
 NORETURN CDECL void kernel_main(u32 magic,
                                 struct multiboot_info *info) {
   call_kernel_ctors();
-  early_init_terminals();
+  early_init_serial_terminal();
 
   parse_multiboot_info(magic, info);
 
-  // init_fb_terminal();
+  init_video_terminal();
 
   init_exception_handling();
   init_irq_handling();

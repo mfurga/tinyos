@@ -3,20 +3,17 @@
 
 #include "serial.h"
 
-void serial_term_init(void) {
+static void init(struct term *t) {
+  UNUSED(t);
   serial_init_port(COM1);
 }
 
-void serial_term_write(const char *buf, size_t size) {
-  for (size_t i = 0; i < size; i++) {
-    serial_write(COM1, (u8)buf[i]);
-  }
+static void serial_write_char(char c) {
+  serial_write(COM1, c);
 }
 
-static const struct terminal serial_term = {
-  .type = TERMINAL_SERIAL,
-  .init = &serial_term_init,
-  .write = &serial_term_write
+static struct sterm sterm = {
+  .write_char = &serial_write_char
 };
 
-REGISTER_TERMINAL(&serial_term);
+REGISTER_SERIAL_TERMINAL(&init, &sterm);

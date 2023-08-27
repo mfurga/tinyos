@@ -7,6 +7,10 @@
 #include <multiboot.h>
 
 #include "fb.h"
+#include "textmode/textmode_video.h"
+
+extern char _binary_font16x32_psf_start;
+extern char _binary_font8x16_psf_start;
 
 static struct fb fb;
 static struct fb_font fb_font;
@@ -92,6 +96,22 @@ void fb_draw_pixel(u32 x, u32 y, u32 color) {
   }
 }
 
+void fb_draw_line(u32 y, u32 h, u32 color) {
+  assert(h < fb.height);
+
+  if (likely(fb.bpp == 32)) {
+    void *p = (void *)(fb.paddr + fb.pitch * y);
+    memset32(p, color, (h * fb.pitch) >> 2);
+  } else {
+    /* Assume 24. */
+    assert(fb.bpp == 24);
+
+    for (size_t x = 0; x < (h * fb.pitch) / 3; x++) {
+      memset((void *)(fb.paddr + fb.pitch * y + x * 3), color, 3);
+    }
+  }
+}
+
 #define GET_BIT(x, p) (((x) >> (p)) & 1)
 
 void fb_draw_char(u32 x, u32 y, u16 e) {
@@ -114,20 +134,29 @@ void fb_draw_char(u32 x, u32 y, u16 e) {
   }
 }
 
+u32 fb_width(void) {
+  return fb.width;
+}
+
+u32 fb_height(void) {
+  return fb.height;
+}
+
+u32 fb_font_width(void) {
+  return fb_font.width;
+}
+
+u32 fb_font_height(void) {
+  return fb_font.height;
+}
+
+u32 fb_color(u8 color) {
+  assert(color < 16);
+  return fb_colors[color];
+}
+
 void setup_fb_from_multiboot(struct multiboot_info *mbi) {
-  extern char _binary_font16x32_psf_start;
-  extern char _binary_font8x16_psf_start;
-
   assert(mbi->framebuffer_addr <= UINT32_MAX);
-
-  fb.paddr = (u32)mbi->framebuffer_addr;
-  fb.width = mbi->framebuffer_width;
-  fb.height = mbi->framebuffer_height;
-  fb.bpp = mbi->framebuffer_bpp;
-  fb.pitch = mbi->framebuffer_pitch;
-  if (fb.pitch == 0) {
-    fb.pitch = fb.width * (fb.bpp / 8);
-  }
 
   switch (mbi->framebuffer_type) {
     case MULTIBOOT_FRAMEBUFFER_TYPE_INDEXED:
@@ -135,11 +164,20 @@ void setup_fb_from_multiboot(struct multiboot_info *mbi) {
       return;
 
     case MULTIBOOT_FRAMEBUFFER_TYPE_EGA_TEXT:
-      printk("Text mode framebuffer is not supported\n");
+      setup_textmode_from_multiboot(mbi);
       return;
 
     case MULTIBOOT_FRAMEBUFFER_TYPE_RGB:
-      #define bitmask(s, p) (((1u << (s)) - 1) << (p)) 
+      fb.paddr = (u32)mbi->framebuffer_addr;
+      fb.width = mbi->framebuffer_width;
+      fb.height = mbi->framebuffer_height;
+      fb.bpp = mbi->framebuffer_bpp;
+      fb.pitch = mbi->framebuffer_pitch;
+      if (fb.pitch == 0) {
+        fb.pitch = fb.width * (fb.bpp / 8);
+      }
+
+      #define bitmask(s, p) (((1u << (s)) - 1) << (p))
 
       fb.red_pos = mbi->framebuffer_red_field_position;
       fb.red_mask = bitmask(mbi->framebuffer_red_mask_size, fb.red_pos);
@@ -149,23 +187,22 @@ void setup_fb_from_multiboot(struct multiboot_info *mbi) {
       fb.blue_mask = bitmask(mbi->framebuffer_blue_mask_size, fb.blue_pos);
 
       #undef bitmask
-    break;
 
-    default:
-      printk("Invalid framebuffer type\n");
-      return;
+      fb_init_colors();
+      fb_init_font(&_binary_font8x16_psf_start);
+
+      printk("Framebuffer info:\n"
+             "paddr: 0x%08x\n"
+             "resolution: %u x %u x %u\n"
+             "pitch: %u\n"
+             "colors: red (%u %u) green (%u %u) blue (%u %u)\n",
+             fb.paddr, fb.width, fb.height, fb.bpp, fb.pitch,
+             fb.red_pos, fb.red_mask,
+             fb.green_pos, fb.green_mask,
+             fb.blue_pos, fb.blue_mask);
+
+      register_fb_terminal();
+
+      break;
   }
-
-  fb_init_colors();
-  fb_init_font(&_binary_font8x16_psf_start);
-
-  printk("Framebuffer info:\n"
-         "paddr: 0x%08x\n"
-         "resolution: %u x %u x %u\n"
-         "pitch: %u\n"
-         "colors: red (%u %u) green (%u %u) blue (%u %u)\n",
-         fb.paddr, fb.width, fb.height, fb.bpp, fb.pitch,
-         fb.red_pos, fb.red_mask,
-         fb.green_pos, fb.green_mask,
-         fb.blue_pos, fb.blue_mask);
 }
