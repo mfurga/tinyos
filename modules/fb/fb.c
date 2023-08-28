@@ -3,6 +3,7 @@
 #include <tinyos/kernel/printk.h>
 #include <tinyos/common/string.h>
 #include <tinyos/common/colors.h>
+#include <tinyos/kernel/hal.h>
 
 #include <multiboot.h>
 
@@ -109,6 +110,20 @@ void fb_draw_line(u32 y, u32 h, u32 color) {
     for (size_t x = 0; x < (h * fb.pitch) / 3; x++) {
       memset((void *)(fb.paddr + fb.pitch * y + x * 3), color, 3);
     }
+  }
+}
+
+void fb_scroll_up(u32 h) {
+  void *d = (void *)fb.paddr;
+  void *s = (void *)(fb.paddr + fb.pitch * h);
+
+  if (likely(fb.bpp == 32)) {
+    memcpy32(d, s, (fb.pitch * (fb.height - h)) >> 2);
+  } else {
+    /* Assume 24. */
+    assert(fb.bpp == 24);
+
+    memcpy(d, s, fb.pitch * (fb.height - h));
   }
 }
 

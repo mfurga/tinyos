@@ -38,6 +38,8 @@ void fb_draw_pixel(u32 x, u32 y, u32 color);
 
 void fb_draw_line(u32 y, u32 h, u32 color);
 
+void fb_scroll_up(u32 h);
+
 void fb_draw_char(u32 x, u32 y, u16 e);
 
 void register_fb_terminal(void);

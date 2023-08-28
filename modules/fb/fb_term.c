@@ -20,15 +20,26 @@ static void vterm_clear_row(u16 row, u8 bg) {
   fb_draw_line(row * fb_font_height(), fb_font_height(), fb_color(bg));
 }
 
+static void vterm_scroll_up(u8 bg) {
+  UNUSED(bg);
+
+  u16 row = fb_height() / fb_font_height() - 1;
+
+  fb_scroll_up(fb_font_height());
+  fb_draw_line(row * fb_font_height(), fb_font_height(), fb_color(bg));
+}
+
 static void vterm_move_cursor(u16 row, u16 col) {
   UNUSED(row);
   UNUSED(col);
+  /* not implemented */
 }
 
 static struct vterm vterm = {
   .write_char_at = &vterm_write_char_at,
   .clear_row = &vterm_clear_row,
-  .move_cursor = &vterm_move_cursor,
+  .scroll_up = &vterm_scroll_up,
+  .move_cursor = &vterm_move_cursor
 };
 
 void register_fb_terminal(void) {
