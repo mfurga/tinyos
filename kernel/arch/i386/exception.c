@@ -44,7 +44,8 @@ void exception_handle(int_context_t *ctx) {
   assert(ctx->int_no < ARRAY_SIZE(exception_handlers));
 
   if (unlikely(exception_handlers[ctx->int_no] == NULL)) {
-    panic("Not registered handler for 0x%02x exception", ctx->int_no);
+    panic("Not registered handler for 0x%02x exception (0x%x)",
+      ctx->int_no, ctx->error_code);
   }
 
   exception_handlers[ctx->int_no](ctx);

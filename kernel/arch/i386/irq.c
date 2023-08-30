@@ -19,6 +19,8 @@ void init_irq_handling(void) {
 
     pic_8259_mask(i);
   }
+
+  enable_interrupts();
 }
 
 void irq_hander_register(u8 no, irq_handler_t handler) {

@@ -8,7 +8,7 @@ static void init(struct term *t) {
   serial_init_port(COM1);
 }
 
-static void serial_write_char(char c) {
+void serial_write_char(char c) {
   serial_write(COM1, c);
 }
 

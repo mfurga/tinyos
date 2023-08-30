@@ -28,7 +28,6 @@ void video_terminal_write(struct term *t, const char *buf, size_t size, u8 color
       vt->r++;
     } else if (unlikely(buf[i] == '\r')) {
       vt->c = 0;
-      vt->clear_row(vt->r, vt->bg);
     } else {
       vt->write_char_at(vt->r, vt->c, VGA_ENTRY_MAKE(buf[i], color));
       vt->c++;

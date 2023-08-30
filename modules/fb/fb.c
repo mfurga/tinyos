@@ -1,14 +1,17 @@
 #include <tinyos/common/common.h>
-#include <tinyos/kernel/panic.h>
-#include <tinyos/kernel/printk.h>
 #include <tinyos/common/string.h>
 #include <tinyos/common/colors.h>
+#include <tinyos/kernel/panic.h>
+#include <tinyos/kernel/printk.h>
 #include <tinyos/kernel/hal.h>
+#include <tinyos/kernel/memory.h>
 
 #include <multiboot.h>
 
 #include "fb.h"
 #include "textmode/textmode_video.h"
+
+#define CHARS_IN_ROW_THRESHOLD 160
 
 extern char _binary_font16x32_psf_start;
 extern char _binary_font8x16_psf_start;
@@ -118,6 +121,7 @@ void fb_scroll_up(u32 h) {
   void *s = (void *)(fb.paddr + fb.pitch * h);
 
   if (likely(fb.bpp == 32)) {
+    /* FIXME: Reading from fb memory is very slow */
     memcpy32(d, s, (fb.pitch * (fb.height - h)) >> 2);
   } else {
     /* Assume 24. */
@@ -149,25 +153,15 @@ void fb_draw_char(u32 x, u32 y, u16 e) {
   }
 }
 
-u32 fb_width(void) {
-  return fb.width;
-}
+void fb_init(void) {
+  fb_init_colors();
 
-u32 fb_height(void) {
-  return fb.height;
-}
+  void *font = fb.width / 8 <= CHARS_IN_ROW_THRESHOLD
+    ? (void *)&_binary_font8x16_psf_start
+    : (void *)&_binary_font16x32_psf_start;
 
-u32 fb_font_width(void) {
-  return fb_font.width;
-}
-
-u32 fb_font_height(void) {
-  return fb_font.height;
-}
-
-u32 fb_color(u8 color) {
-  assert(color < 16);
-  return fb_colors[color];
+  fb_init_font(font);
+  set_memory_cache_for_fb(fb.paddr, fb.pitch * fb.height);
 }
 
 void setup_fb_from_multiboot(struct multiboot_info *mbi) {
@@ -203,21 +197,38 @@ void setup_fb_from_multiboot(struct multiboot_info *mbi) {
 
       #undef bitmask
 
-      fb_init_colors();
-      fb_init_font(&_binary_font8x16_psf_start);
-
       printk("Framebuffer info:\n"
-             "paddr: 0x%08x\n"
-             "resolution: %u x %u x %u\n"
-             "pitch: %u\n"
-             "colors: red (%u %u) green (%u %u) blue (%u %u)\n",
-             fb.paddr, fb.width, fb.height, fb.bpp, fb.pitch,
-             fb.red_pos, fb.red_mask,
-             fb.green_pos, fb.green_mask,
-             fb.blue_pos, fb.blue_mask);
+         "paddr: 0x%08x\n"
+         "resolution: %u x %u x %u\n"
+         "pitch: %u\n"
+         "colors: red (%u %u) green (%u %u) blue (%u %u)\n",
+         fb.paddr, fb.width, fb.height, fb.bpp, fb.pitch,
+         fb.red_pos, fb.red_mask,
+         fb.green_pos, fb.green_mask,
+         fb.blue_pos, fb.blue_mask);
 
       register_fb_terminal();
-
       break;
   }
+}
+
+u32 fb_width(void) {
+  return fb.width;
+}
+
+u32 fb_height(void) {
+  return fb.height;
+}
+
+u32 fb_font_width(void) {
+  return fb_font.width;
+}
+
+u32 fb_font_height(void) {
+  return fb_font.height;
+}
+
+u32 fb_color(u8 color) {
+  assert(color < 16);
+  return fb_colors[color];
 }

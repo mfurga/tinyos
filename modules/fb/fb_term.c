@@ -6,6 +6,8 @@
 static void init(struct term *t) {
   assert(t->vt != NULL);
 
+  fb_init();
+
   u16 rows = fb_height() / fb_font_height();
   u16 cols = fb_width() / fb_font_width();
 
@@ -16,7 +18,7 @@ static void vterm_write_char_at(u16 row, u16 col, u16 entry) {
   fb_draw_char(col * fb_font_width(), row * fb_font_height(), entry);
 }
 
-static void vterm_clear_row(u16 row, u8 bg) {
+void vterm_clear_row(u16 row, u8 bg) {
   fb_draw_line(row * fb_font_height(), fb_font_height(), fb_color(bg));
 }
 

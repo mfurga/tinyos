@@ -28,18 +28,16 @@ struct fb_font {
   u8 *glyph_data;
 };
 
+void fb_init(void);
+void fb_draw_pixel(u32 x, u32 y, u32 color);
+void fb_draw_line(u32 y, u32 h, u32 color);
+void fb_scroll_up(u32 h);
+void fb_draw_char(u32 x, u32 y, u16 e);
+
 u32 fb_width(void);
 u32 fb_height(void);
 u32 fb_font_width(void);
 u32 fb_font_height(void);
 u32 fb_color(u8 color);
-
-void fb_draw_pixel(u32 x, u32 y, u32 color);
-
-void fb_draw_line(u32 y, u32 h, u32 color);
-
-void fb_scroll_up(u32 h);
-
-void fb_draw_char(u32 x, u32 y, u16 e);
 
 void register_fb_terminal(void);

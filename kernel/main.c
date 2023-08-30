@@ -57,19 +57,16 @@ NORETURN CDECL void kernel_main(u32 magic,
   call_kernel_ctors();
   early_init_serial_terminal();
 
+  init_exception_handling();
+  init_irq_handling();
+  init_segmentation();
+
   parse_multiboot_info(magic, info);
 
   init_video_terminal();
-
-  init_exception_handling();
-  init_irq_handling();
-
-  init_segmentation();
   init_timer();
 
-  // init_modules();
-  // enable_interrupts();
+  init_modules();
 
   for (;;);
 }
-
