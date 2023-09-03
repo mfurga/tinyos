@@ -5,6 +5,7 @@
 #include <tinyos/kernel/printk.h>
 #include <tinyos/kernel/hal.h>
 #include <tinyos/kernel/memory.h>
+#include <tinyos/kernel/mmap.h>
 
 #include <multiboot.h>
 
@@ -206,6 +207,12 @@ void setup_fb_from_multiboot(struct multiboot_info *mbi) {
          fb.red_pos, fb.red_mask,
          fb.green_pos, fb.green_mask,
          fb.blue_pos, fb.blue_mask);
+
+      mem_add_region((struct mem_region) {
+        .addr = fb.paddr,
+        .len = fb.pitch * fb.height,
+        .type = MEMORY_RESERVED
+      });
 
       register_fb_terminal();
       break;

@@ -30,7 +30,7 @@ void parse_multiboot_info(u32 magic,
     setup_fb_from_multiboot(mbi);
   }
 
-  init_memory_map((multiboot_memory_map_t *)mbi->mmap_addr, mbi->mmap_length);
+  init_memory_map(mbi);
 
   printk("Memory map provided by the bootloader:\n");
   dump_memory_map();
@@ -67,6 +67,8 @@ NORETURN CDECL void kernel_main(u32 magic,
   init_timer();
 
   init_modules();
+
+  dump_memory_map();
 
   for (;;);
 }

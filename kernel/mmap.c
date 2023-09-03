@@ -1,21 +1,7 @@
 #include <tinyos/common/common.h>
 #include <tinyos/kernel/panic.h>
-#include <tinyos/kernel/system_mmap.h>
+#include <tinyos/kernel/mmap.h>
 #include <tinyos/kernel/printk.h>
-
-enum mem_region_type {
-  MEMORY_AVAIABLE = 1,
-  MEMORY_RESERVED,
-  MEMORY_ACPI_RECLAIMABLE,
-  MEMORY_NVS,
-  MEMORY_BADRAM
-};
-
-struct mem_region {
-  u64 addr;
-  u64 len;
-  enum mem_region_type type;
-};
 
 static struct mem_region mem_regions[128];
 static size_t mem_region_idx = 0;
@@ -28,7 +14,7 @@ static const char *mem_region_type_to_str[] = {
   [MEMORY_BADRAM] = "BADRAM"
 };
 
-static void mem_add_region(struct mem_region region) {
+void mem_add_region(struct mem_region region) {
   if (mem_region_idx >= ARRAY_SIZE(mem_regions)) {
     panic("Not enought space to add memory region (max: %u)\n",
       ARRAY_SIZE(mem_regions));
@@ -47,7 +33,10 @@ static void mem_add_region_kernel(void) {
   });
 }
 
-void init_memory_map(multiboot_memory_map_t *mmap, u32 mmap_length) {
+void init_memory_map(struct multiboot_info *mbi) {
+  multiboot_memory_map_t *mmap = (multiboot_memory_map_t *)mbi->mmap_addr;
+  u32 mmap_length = mbi->mmap_length;
+
   assert(mmap_length % sizeof(multiboot_memory_map_t) == 0);
   size_t len = mmap_length / sizeof(multiboot_memory_map_t);
 
@@ -74,3 +63,4 @@ void dump_memory_map(void) {
            mem_region_type_to_str[mem_regions[i].type]);
   }
 }
+

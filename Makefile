@@ -7,7 +7,7 @@ DEBUG := 0
 
 BUILD_DIR := build
 BUILD_DIR := $(ROOT_DIR)/$(BUILD_DIR)
-KIMAGE := $(BUILD_DIR)/kernel.elf
+KIMAGE := $(BUILD_DIR)/tinyos.elf
 BIMAGE := $(BUILD_DIR)/bootloader/boot.img
 OS_IMAGE := $(BUILD_DIR)/tinyos.img
 
@@ -89,6 +89,6 @@ asm: all
 
 .PHONY: run
 run: all
-	#./tools/run_qemu.sh $(KIMAGE) $(DEBUG)
-	bochs -f tools/bochsrc -rc tools/bochs_commands
+	#./misc/run_qemu.sh $(KIMAGE) $(DEBUG)
+	bochs -f misc/bochsrc -rc tools/bochs_commands
 
