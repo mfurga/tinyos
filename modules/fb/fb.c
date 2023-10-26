@@ -208,7 +208,7 @@ void setup_fb_from_multiboot(struct multiboot_info *mbi) {
          fb.green_pos, fb.green_mask,
          fb.blue_pos, fb.blue_mask);
 
-      mem_add_region((struct mem_region) {
+      append_mem_region((struct mem_region) {
         .addr = fb.paddr,
         .len = fb.pitch * fb.height,
         .type = MEMORY_RESERVED

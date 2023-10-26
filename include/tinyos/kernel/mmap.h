@@ -17,7 +17,7 @@ struct mem_region {
   enum mem_region_type type;
 };
 
-void mem_add_region(struct mem_region region);
+void append_mem_region(struct mem_region region);
 
 void init_memory_map(struct multiboot_info *mbi);
 
