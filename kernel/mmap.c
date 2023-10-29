@@ -82,14 +82,14 @@ static void fix_mem_regions(void) {
 }
 
 static void append_mem_region_kernel(void) {
-  extern int __KERNEL_START_PADDR;
-  extern int __KERNEL_END_PADDR;
+  // extern int __KERNEL_START_PADDR;
+  // extern int __KERNEL_END_PADDR;
 
-  append_mem_region((struct mem_region) {
-    .addr = (u32)&__KERNEL_START_PADDR,
-    .len = (u32)&__KERNEL_END_PADDR - (u32)&__KERNEL_START_PADDR + 1,
-    .type = MEMORY_RESERVED
-  });
+  // append_mem_region((struct mem_region) {
+  //   .addr = (u32)&__KERNEL_START_PADDR,
+  //   .len = (u32)&__KERNEL_END_PADDR - (u32)&__KERNEL_START_PADDR + 1,
+  //   .type = MEMORY_RESERVED
+  // });
 }
 
 void init_memory_map(struct multiboot_info *mbi) {

@@ -1,0 +1,6 @@
+#pragma once
+
+#define KERNEL_VADDR 0xc0000000
+#define KERNEL_PADDR 0x00100000
+
+#define KERNEL_INIT_STACK_SZ 4096

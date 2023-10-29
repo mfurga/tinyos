@@ -8,7 +8,15 @@
 .intel_syntax noprefix
 
 #define ASM_FILE 1
+#include <tinyos/common/config.h>
 #include <multiboot.h>
+
+#define VADDR_TO_PADDR(vaddr) ((vaddr) - KERNEL_VADDR + KERNEL_PADDR)
+#define VADDR_TO_PDIR(vaddr) ((vaddr) >> 20)
+#define MAKE_DIR_ENTRY_4MB(paddr) ((1 << 0) /* present */ | \
+                                   (1 << 1) /* rw */ | \
+                                   (1 << 7) /* ps */ | \
+                                   ((paddr) & 0xffc00000) /* paddr */)
 
 .code32
 
@@ -41,18 +49,36 @@ multiboot_entry:
   cli
   cld
 
+  mov edi, VADDR_TO_PADDR(offset page_dir_4mb)
+  mov dword ptr [edi + VADDR_TO_PDIR(0)], MAKE_DIR_ENTRY_4MB(0)
+  mov dword ptr [edi + VADDR_TO_PDIR(KERNEL_VADDR)], MAKE_DIR_ENTRY_4MB(0)
+
+  /* Set address of page directory in CR3 */
+  mov edx, cr3
+  or edx, edi
+  mov cr3, edx
+
+  /* Enable PSE (Page Size Extension) */
+  mov edx, cr4
+  or edx, 0x00000010
+  mov cr4, edx
+
+  /* Enable paging */
+  mov edx, cr0
+  or edx, (1 << 31)
+  mov cr0, edx
+
+  mov ecx, offset .jmp_virtual_addr
+  jmp ecx
+
+.jmp_virtual_addr:
+  mov esp, offset kernel_init_stack + KERNEL_INIT_STACK_SZ - 4
+
   /* Push Multiboot information structure. */
   push ebx
 
   /* Push magic value. */
   push eax
-
-  /* Clear BSS section. */
-  xor eax, eax
-  mov ecx, offset __BSS_END_PADDR
-  sub ecx, offset __BSS_START_PADDR
-  mov edi, offset __BSS_START_PADDR
-  rep stosb
 
   /* Call C kernel_main function. */
   call kernel_main
@@ -60,3 +86,7 @@ multiboot_entry:
   /* Never go here! */
   jmp $
 
+.section .bss
+
+.comm page_dir_4mb, 4096 /* size */, 4096 /* alignment */ 
+.comm kernel_init_stack, KERNEL_INIT_STACK_SZ

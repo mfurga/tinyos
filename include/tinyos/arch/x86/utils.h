@@ -106,6 +106,22 @@ static inline void write_cr0(u32 value) {
                : /* no clobber */);
 }
 
+static inline u32 read_cr2(void) {
+  u32 value;
+  asm_volatile("mov %0, cr2"
+               : "=q" (value)
+               : /* no input */
+               : /* no clobber */);
+  return value;
+}
+
+static inline void write_cr2(u32 value) {
+  asm_volatile("mov cr2, %0"
+               : /* no output */
+               : "q" (value)
+               : /* no clobber */);
+}
+
 static inline u32 read_cr4(void) {
   u32 value;
   asm_volatile("mov %0, cr4"

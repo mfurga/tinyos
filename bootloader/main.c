@@ -10,6 +10,8 @@ bool main_loop_logic(void) {
   char c;
   unsigned idx;
 
+  // return true;
+
   console_clear_screen();
 
   printf(C_GREEN "\n*** TinyOS bootloader ***\n\n");

@@ -12,7 +12,9 @@
 #define PH_TYPE 0x00
 #define PH_OFFSET 0x04
 #define PH_VADDR 0x08
+#define PH_PADDR 0x0c
 #define PH_FILESZ 0x10
+#define PH_MEMSZ 0x14
 
 #define PT_LOAD 1
 
@@ -88,6 +90,8 @@ void *load_kernel(void) {
   head_no = 0;
   load_addr = base_addr;
 
+  u32 entry_point = fetch_dword(base_addr + ELF_ENTRY);
+
   u16 phsize = fetch_word(base_addr + ELF_PHENTSIZE);
   u16 phnum = fetch_word(base_addr + ELF_PHNUM);
   u32 ph_addr = base_addr + fetch_dword(base_addr + ELF_PHOFF);
@@ -97,16 +101,22 @@ void *load_kernel(void) {
 
     if (ph_type == PT_LOAD) {
       u32 ph_filesz = fetch_dword(ph_addr + PH_FILESZ);
-      u32 ph_offset = base_addr + fetch_dword(ph_addr + PH_OFFSET);
+      u32 ph_memsz = fetch_dword(ph_addr + PH_MEMSZ);
+      u32 ph_offset = fetch_dword(ph_addr + PH_OFFSET);
+      u32 ph_paddr = fetch_dword(ph_addr + PH_PADDR);
       u32 ph_vaddr = fetch_dword(ph_addr + PH_VADDR);
 
-      check_addr(ph_offset + ph_filesz);
+      check_addr(base_addr + ph_offset + ph_filesz);
 
-      memcpy((void *)ph_vaddr, (void *)ph_offset, ph_filesz);
+      memset((void *)ph_paddr, 0, ph_memsz);
+      memcpy((void *)ph_paddr, (void *)(base_addr + ph_offset), ph_filesz);
+
+      if (entry_point >= ph_vaddr && entry_point <= (ph_vaddr + ph_memsz)) {
+        entry_point = ph_paddr + (entry_point - ph_vaddr);
+      }
     }
     ph_addr += phsize;
   }
 
-  u32 entry_point = fetch_dword(base_addr + ELF_ENTRY);
   return (void *)entry_point;
 }

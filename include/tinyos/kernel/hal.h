@@ -21,3 +21,5 @@
 void init_exception_handling(void);
 
 void init_segmentation(void);
+
+void init_paging(void);
