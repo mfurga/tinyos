@@ -7,6 +7,13 @@ size_t strlen(const char *s) {
   return l;
 }
 
+void bzero(void *s, size_t n) {
+  asm_volatile("rep stosb;"
+               : /* no ouput */
+               : "c" (n), "D" (s), "a" (0)
+               : "memory", "cc");
+}
+
 void *memset(void *s, u8 v, size_t n) {
   asm_volatile("rep stosb;"
                : /* no output */

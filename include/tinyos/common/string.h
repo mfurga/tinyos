@@ -4,6 +4,8 @@
 
 size_t strlen(const char *s);
 
+void bzero(void *s, size_t n);
+
 void *memset(void *s, u8 v, size_t n);
 void *memset16(void *s, u16 v, size_t n);
 void *memset32(void *s, u32 v, size_t n);

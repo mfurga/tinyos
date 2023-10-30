@@ -51,7 +51,7 @@ multiboot_entry:
 
   mov edi, VADDR_TO_PADDR(offset page_dir_4mb)
   mov dword ptr [edi + VADDR_TO_PDIR(0)], MAKE_DIR_ENTRY_4MB(0)
-  mov dword ptr [edi + VADDR_TO_PDIR(KERNEL_VADDR)], MAKE_DIR_ENTRY_4MB(0)
+  mov dword ptr [edi + VADDR_TO_PDIR(KERNEL_BASE_VADDR)], MAKE_DIR_ENTRY_4MB(0)
 
   /* Set address of page directory in CR3 */
   mov edx, cr3
