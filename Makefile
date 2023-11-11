@@ -3,7 +3,7 @@
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 VERBOSE := 0
-DEBUG := 0
+DEBUG := 1
 
 BUILD_DIR := build
 BUILD_DIR := $(ROOT_DIR)/$(BUILD_DIR)
@@ -55,7 +55,7 @@ $(BIMAGE): $(KIMAGE)
 	@cd bootloader && cat $(BUILD_DIR)/KERNEL_SIZE | $(MAKE) KERNEL_SIZE=$$(xargs)
 
 $(KIMAGE): $(OBJS)
-	@echo "Linking ..."
+	@echo "\033[0;32m[LD]\033[0m ..."
 	$(Q)$(CC) $(OBJS) -o $@ $(LDFLASGS)
 	@$(NM) $@ | awk '{ print $$1 " " $$3 }' >$(BUILD_DIR)/symbols
 ifeq ($(DEBUG), 0)
@@ -66,17 +66,17 @@ endif
 
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
-	@echo "Compiling $^"
+	@echo "\033[0;32m[CC]\033[0m $^"
 	$(Q)$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/%.o: %.S
 	@mkdir -p $(dir $@)
-	@echo "Compiling $^"
+	@echo "\033[0;32m[AS]\033[0m $^"
 	$(Q)$(AS) $(ASFLAGS) $< -o $@
 
 $(BUILD_DIR)/%.o: %.psf
 	@mkdir -p $(dir $@)
-	@echo "Converting font $^"
+	@echo "\033[0;32m[OBJCOPY]\033[0m $^"
 	$(Q)cd $(shell dirname $<) && $(OBJCOPY) -O elf32-i386 -I binary $(shell basename $<) $@
 
 .PHONY: clean
@@ -89,6 +89,6 @@ asm: all
 
 .PHONY: run
 run: all
-	#./misc/run_qemu.sh $(KIMAGE) $(DEBUG)
-	bochs -f misc/bochsrc -rc tools/bochs_commands
+	#./misc/run_qemu.sh $(OS_IMAGE) $(DEBUG)
+	bochs -f misc/bochsrc -rc misc/bochs_commands
 

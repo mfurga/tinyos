@@ -49,7 +49,7 @@ $(STAGE1): $(STAGE1_SRC)
 	@mapfile -t <$(BUILD_DIR)/STAGE2_SIZE && $(AS) -fbin -DSTAGE2_SIZE=$$MAPFILE $(STAGE1_SRC) -o $(STAGE1)
 
 $(STAGE2): $(OBJS)
-	@echo "Linking ..."
+	@echo -e "\033[0;32m[LD]\033[0m ..."
 	$(Q)$(LD) $(OBJS) -o $(BUILD_DIR)/stage2.elf $(LDFLASGS)
 	@$(NM) $(BUILD_DIR)/stage2.elf | awk '{ print $$1 " " $$3 }' >$(BUILD_DIR)/symbols
 	@$(STRIP) $(BUILD_DIR)/stage2.elf
@@ -60,12 +60,12 @@ $(STAGE2): $(OBJS)
 
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
-	@echo "Compiling $^"
+	@echo -e "\033[0;32m[CC]\033[0m $^"
 	$(Q)$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/%.o: %.asm
 	@mkdir -p $(dir $@)
-	@echo "Compiling $^"
+	@echo -e "\033[0;32m[AS]\033[0m $^"
 	$(Q)$(AS) $(ASFLAGS) $< -o $@
 
 .PHONY: clean
